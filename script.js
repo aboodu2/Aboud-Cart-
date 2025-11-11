@@ -104,6 +104,13 @@ function apiCall(endpoint, data = null) {
  */
 function showUserMessage(message, type = 'info') {
     const msgEl = document.getElementById('user-messages');
+    
+    // **فحص وجود العنصر قبل الوصول إلى خاصية classList**
+    if (!msgEl) {
+        console.error('Cannot find #user-messages element.');
+        return;
+    }
+    
     msgEl.textContent = message;
     msgEl.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'bg-green-100', 'text-green-800', 'bg-blue-100', 'text-blue-800');
     
@@ -126,6 +133,13 @@ function showUserMessage(message, type = 'info') {
  */
 function updateBalanceDisplay() {
     const balanceEl = document.getElementById('user-balance');
+    
+    // **فحص وجود العنصر قبل الوصول إلى خاصية innerHTML**
+    if (!balanceEl) {
+         // هذا يحدث إذا كنا في شاشة تسجيل الدخول أو في لوحة المدير
+         return;
+    }
+    
     if (userSession && userSession.role === 'user') {
         balanceEl.innerHTML = `
             <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V9a1 1 0 00-1-1H7m5 4v1a1 1 0 001 1h3m-4 5h4m-4 0a9 9 0 110-18 9 9 0 010 18z"></path></svg>
@@ -286,8 +300,10 @@ function initApp() {
         userSession = JSON.parse(storedUser);
         switchMainView(userSession.role);
     } else {
-        // 2. إذا لم يكن هناك مستخدم مسجل، تظهر شاشة تسجيل الدخول مباشرة (تم إزالة شاشة التحميل)
+        // 2. إذا لم يكن هناك مستخدم مسجل، تظهر شاشة تسجيل الدخول مباشرة 
         switchMainView(null); 
+        
+        // **ملاحظة:** تم إزالة أي كود يخص شاشة التحميل (#loading-screen) هنا.
     }
 }
 
@@ -299,8 +315,12 @@ function logout() {
     sessionStorage.removeItem('user');
     userSession = null;
     switchMainView(null);
-    // إخفاء أي رسائل سابقة
-    document.getElementById('user-messages').classList.add('hidden');
+    
+    // **فحص وجود العنصر قبل الوصول إليه**
+    const userMessagesEl = document.getElementById('user-messages');
+    if (userMessagesEl) {
+        userMessagesEl.classList.add('hidden');
+    }
 }
 
 
@@ -317,16 +337,27 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     const password = document.getElementById('password').value;
     const messageEl = document.getElementById('login-message');
     
+    // **فحص وجود العنصر قبل الوصول إليه** (لمنع الخطأ "Cannot read properties of null")
+    if (!messageEl) {
+        console.error('Login message element not found.');
+        return;
+    }
+
     // إزالة تنسيقات الخطأ السابقة
     messageEl.classList.add('hidden');
     messageEl.classList.remove('bg-red-700', 'text-white');
 
-    // إظهار شاشة التحميل مؤقتاً لمحاكاة طلب الـ API
-    // لاحظ: في هذا السيناريو لم نعد نستخدم شاشة التحميل الكاملة، لكن يمكننا استخدام سبينر صغير
     const loginButton = e.submitter;
     const originalText = loginButton.textContent;
+    
+    // **فحص وجود العنصر قبل الوصول إليه**
+    if (!loginButton) {
+         console.error('Login button element not found.');
+         return;
+    }
+    
     loginButton.disabled = true;
-    loginButton.innerHTML = 'جاري...'; // يمكن استبدالها بسبينر CSS
+    loginButton.innerHTML = 'جاري...';
 
     try {
         const result = await apiCall('/auth/login', { email, password });
@@ -351,6 +382,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 });
 
 
+// ... (بقية دوال عرض المحتوى لم تتغير وهي سليمة)
 // ====================================
 // 7. وظائف عرض محتوى واجهة المستخدم (User View Rendering)
 // ====================================
@@ -525,6 +557,12 @@ function openBuyModal(productId) {
     const modal = document.getElementById('buy-modal');
     const content = document.getElementById('modal-content');
     const confirmBtn = document.getElementById('confirm-buy-btn');
+    
+    // **فحص وجود العنصر قبل الوصول إليه**
+    if (!modal || !content || !confirmBtn) {
+         console.error('Buy modal elements not found.');
+         return;
+    }
 
     content.innerHTML = `
         <div class="space-y-3">
@@ -552,12 +590,20 @@ function openBuyModal(productId) {
 
 function closeBuyModal() {
     const modal = document.getElementById('buy-modal');
+    
+    // **فحص وجود العنصر قبل الوصول إليه**
+    if (!modal) return;
+    
     modal.classList.add('hidden');
     modal.classList.remove('flex');
 }
 
 async function confirmPurchase(productId, price) {
     const confirmBtn = document.getElementById('confirm-buy-btn');
+    
+    // **فحص وجود العنصر قبل الوصول إليه**
+    if (!confirmBtn) return;
+    
     const originalText = confirmBtn.textContent;
     confirmBtn.disabled = true;
     confirmBtn.textContent = 'جاري...';
@@ -571,7 +617,11 @@ async function confirmPurchase(productId, price) {
             showUserView('orders');
         }
     } catch (error) {
-        document.getElementById('buy-status').innerHTML = `<span class="text-red-600">${error.message}</span>`;
+        // **فحص وجود العنصر قبل الوصول إليه**
+        const buyStatusEl = document.getElementById('buy-status');
+        if (buyStatusEl) {
+             buyStatusEl.innerHTML = `<span class="text-red-600">${error.message}</span>`;
+        }
         showUserMessage(error.message, 'error');
     } finally {
         confirmBtn.textContent = originalText;
@@ -580,6 +630,7 @@ async function confirmPurchase(productId, price) {
 }
 
 
+// ... (بقية دوال عرض محتوى المدير والإدارة لم تتغير وهي سليمة)
 // ====================================
 // 9. وظائف عرض محتوى لوحة المدير (Admin View Rendering)
 // ====================================
@@ -680,6 +731,12 @@ function openAdminCategoryModal(id = null, name = '', image = '') {
     const title = document.getElementById('admin-modal-title');
     const submitBtn = document.getElementById('admin-category-submit-btn');
     
+    // **فحص وجود العناصر قبل الوصول إليها**
+    if (!modal || !title || !submitBtn) {
+         console.error('Admin modal elements not found.');
+         return;
+    }
+    
     document.getElementById('category-id').value = id || '';
     document.getElementById('category-name').value = name;
     document.getElementById('category-image').value = image;
@@ -698,6 +755,9 @@ function openAdminCategoryModal(id = null, name = '', image = '') {
 
 function closeAdminCategoryModal() {
     const modal = document.getElementById('admin-category-modal');
+    // **فحص وجود العنصر قبل الوصول إليه**
+    if (!modal) return;
+    
     modal.classList.add('hidden');
     modal.classList.remove('flex');
 }
@@ -712,6 +772,9 @@ document.getElementById('admin-category-form').addEventListener('submit', async 
     const data = { action, name, image, id: id ? parseInt(id) : null };
     
     const submitBtn = document.getElementById('admin-category-submit-btn');
+    // **فحص وجود العنصر قبل الوصول إليه**
+    if (!submitBtn) return;
+    
     const originalText = submitBtn.textContent;
     submitBtn.disabled = true;
     submitBtn.textContent = 'جاري الحفظ...';
@@ -720,7 +783,13 @@ document.getElementById('admin-category-form').addEventListener('submit', async 
         const result = await apiCall('/admin/categories', data);
         showUserMessage(result.message, 'success');
         closeAdminCategoryModal();
-        renderAdminCategoriesView(document.getElementById('admin-content-area')); // تحديث العرض
+        
+        // **فحص وجود العنصر قبل الوصول إليه**
+        const adminContentArea = document.getElementById('admin-content-area');
+        if(adminContentArea) {
+             renderAdminCategoriesView(adminContentArea); // تحديث العرض
+        }
+
     } catch (error) {
         showUserMessage(error.message, 'error');
     } finally {
@@ -735,7 +804,12 @@ async function deleteCategory(id) {
     try {
         const result = await apiCall('/admin/categories', { action: 'delete', id: id });
         showUserMessage(result.message, 'success');
-        renderAdminCategoriesView(document.getElementById('admin-content-area')); // تحديث العرض
+        
+        // **فحص وجود العنصر قبل الوصول إليه**
+        const adminContentArea = document.getElementById('admin-content-area');
+        if(adminContentArea) {
+             renderAdminCategoriesView(adminContentArea); // تحديث العرض
+        }
     } catch (error) {
         showUserMessage(error.message, 'error');
     }
