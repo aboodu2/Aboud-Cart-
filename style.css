@@ -1,0 +1,30 @@
+/* تطبيق خط كايرو على كامل الصفحة */
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: #f7f9fc; /* خلفية فاتحة */
+}
+
+/* تعديلات على شريط التمرير (Scrollbar) ليناسب التصميم الحديث */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #4A5568; /* رمادي غامق */
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #2D3748;
+}
+
+/* تخصيصات Tailwind */
+.admin-sidebar {
+    width: 280px;
+}
+
+/* كلاس لإخفاء العناصر قبل تحميلها */
+.hidden-until-loaded {
+    display: none;
+}
