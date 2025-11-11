@@ -1,30 +1,34 @@
+/* الملف style.css */
+
 /* تطبيق خط كايرو على كامل الصفحة */
 body {
     font-family: 'Cairo', sans-serif;
-    background-color: #f7f9fc; /* خلفية فاتحة */
+    background-color: #f7f9fc; /* خلفية فاتحة افتراضية */
 }
 
-/* تعديلات على شريط التمرير (Scrollbar) ليناسب التصميم الحديث */
-::-webkit-scrollbar {
-    width: 8px;
-}
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-::-webkit-scrollbar-thumb {
-    background: #4A5568; /* رمادي غامق */
-    border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: #2D3748;
+/*... (باقي التنسيقات كما هي) ...*/
+
+/* ==================================== */
+/* تسجيل الدخول الخرافي (Login) */
+/* ==================================== */
+
+/* خلفية متدرجة داكنة لشاشة تسجيل الدخول */
+.login-bg {
+    /* تدرج أنيق من الأزرق الداكن إلى الأسود */
+    background: linear-gradient(135deg, #1f2937 0%, #0c0d0f 100%);
 }
 
-/* تخصيصات Tailwind */
-.admin-sidebar {
-    width: 280px;
+/* تنسيق حقل الإدخال عند التركيز */
+.login-bg input::placeholder {
+    color: #cbd5e1; /*Placeholder أبيض باهت*/
+}
+.login-bg input:focus {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.4);
 }
 
-/* كلاس لإخفاء العناصر قبل تحميلها */
-.hidden-until-loaded {
-    display: none;
+/* تنسيق رسالة الخطأ (يجب تحديثه في JS ليتناسب مع الخلفية الداكنة) */
+#login-message {
+    background-color: rgba(255, 0, 0, 0.2); /* خلفية حمراء شفافة */
+    color: #ffdddd; /* نص أحمر فاتح */
+    border: 1px solid rgba(255, 0, 0, 0.5);
 }
