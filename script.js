@@ -5,7 +5,7 @@
 // بيانات المستخدمين الافتراضيين
 const mockUsers = {
     // مستخدم عادي
-    "user@test.com": { id: 101, password: "password123", role: "user", balance: 1197.50, name: "مستخدم تجريبي" },
+    "123": { id: 101, password: "123", role: "user", balance: 1197.50, name: "مستخدم تجريبي" },
     // مدير النظام (Admin)
     "aboabood2002r@gmail.com": { id: 201, password: "aboabood", role: "admin", name: "المدير العام" }
 };
