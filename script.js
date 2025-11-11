@@ -44,7 +44,7 @@ function apiCall(endpoint, data = null) {
                         userSession.balance -= product.price;
                         updateBalanceDisplay();
                         
-                        // إضافة طلب جديد إلى قائمة الطلبات المحاكية
+                        // إضافة طلب جديد إلى قائمة الطلبات المحاكاة
                         const newOrder = { 
                             id: orders.length + 1, 
                             productName: product.name, 
@@ -83,7 +83,8 @@ function apiCall(endpoint, data = null) {
                     }
                 } else if (data && data.action === 'delete') {
                     categories = categories.filter(c => c.id !== data.id);
-                    // يجب أيضاً حذف المنتجات التابعة، لكن سنكتفي هنا بحذف القسم للمحاكاة
+                    // حذف المنتجات التابعة أيضاً للمحاكاة
+                    products = products.filter(p => p.categoryId !== data.id);
                     resolve({ status: 'success', message: 'تم حذف القسم بنجاح' });
                 } else {
                     resolve({ status: 'success', data: categories });
@@ -134,11 +135,8 @@ function showUserMessage(message, type = 'info') {
 function updateBalanceDisplay() {
     const balanceEl = document.getElementById('user-balance');
     
-    // **فحص وجود العنصر قبل الوصول إلى خاصية innerHTML**
-    if (!balanceEl) {
-         // هذا يحدث إذا كنا في شاشة تسجيل الدخول أو في لوحة المدير
-         return;
-    }
+    // هذا يحدث إذا كنا في شاشة تسجيل الدخول أو في لوحة المدير
+    if (!balanceEl) return;
     
     if (userSession && userSession.role === 'user') {
         balanceEl.innerHTML = `
@@ -217,7 +215,7 @@ function showUserView(view, id = null) {
 
 /**
  * التبديل بين محتويات لوحة المدير
- * @param {string} view - المحتوى المراد عرضه ('dashboard', 'orders', 'categories', 'settings').
+ * @param {string} view - المحتوى المراد عرضه ('dashboard', 'orders', 'categories', 'products', 'settings').
  */
 function showAdminView(view) {
     const contentArea = document.getElementById('admin-content-area');
@@ -244,6 +242,8 @@ function showAdminView(view) {
         renderAdminOrdersView(contentArea);
     } else if (view === 'categories') {
         renderAdminCategoriesView(contentArea);
+    } else if (view === 'products') { // <-- إضافة منطق إدارة المنتجات هنا
+        renderAdminProductsView(contentArea);
     } else if (view === 'settings') {
         contentArea.innerHTML = renderAdminSettings();
     }
@@ -302,8 +302,6 @@ function initApp() {
     } else {
         // 2. إذا لم يكن هناك مستخدم مسجل، تظهر شاشة تسجيل الدخول مباشرة 
         switchMainView(null); 
-        
-        // **ملاحظة:** تم إزالة أي كود يخص شاشة التحميل (#loading-screen) هنا.
     }
 }
 
@@ -316,7 +314,6 @@ function logout() {
     userSession = null;
     switchMainView(null);
     
-    // **فحص وجود العنصر قبل الوصول إليه**
     const userMessagesEl = document.getElementById('user-messages');
     if (userMessagesEl) {
         userMessagesEl.classList.add('hidden');
@@ -337,25 +334,16 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     const password = document.getElementById('password').value;
     const messageEl = document.getElementById('login-message');
     
-    // **فحص وجود العنصر قبل الوصول إليه** (لمنع الخطأ "Cannot read properties of null")
-    if (!messageEl) {
-        console.error('Login message element not found.');
-        return;
-    }
+    if (!messageEl) return;
 
-    // إزالة تنسيقات الخطأ السابقة
     messageEl.classList.add('hidden');
     messageEl.classList.remove('bg-red-700', 'text-white');
 
     const loginButton = e.submitter;
+    
+    if (!loginButton) return;
+    
     const originalText = loginButton.textContent;
-    
-    // **فحص وجود العنصر قبل الوصول إليه**
-    if (!loginButton) {
-         console.error('Login button element not found.');
-         return;
-    }
-    
     loginButton.disabled = true;
     loginButton.innerHTML = 'جاري...';
 
@@ -382,7 +370,6 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 });
 
 
-// ... (بقية دوال عرض المحتوى لم تتغير وهي سليمة)
 // ====================================
 // 7. وظائف عرض محتوى واجهة المستخدم (User View Rendering)
 // ====================================
@@ -519,6 +506,9 @@ function renderOrdersView(container) {
 }
 
 function renderProfileView() {
+    // يجب التأكد من وجود userSession ودوره قبل العرض
+    if (!userSession) return '';
+    
     return `
         <h1 class="text-3xl font-bold text-gray-800 mb-6">حسابي الشخصي</h1>
         <div class="bg-white p-6 rounded-lg shadow-xl space-y-4">
@@ -558,11 +548,7 @@ function openBuyModal(productId) {
     const content = document.getElementById('modal-content');
     const confirmBtn = document.getElementById('confirm-buy-btn');
     
-    // **فحص وجود العنصر قبل الوصول إليه**
-    if (!modal || !content || !confirmBtn) {
-         console.error('Buy modal elements not found.');
-         return;
-    }
+    if (!modal || !content || !confirmBtn) return;
 
     content.innerHTML = `
         <div class="space-y-3">
@@ -573,7 +559,6 @@ function openBuyModal(productId) {
         </div>
     `;
     
-    // تحديث زر التأكيد
     const statusEl = document.getElementById('buy-status');
     if (userSession.balance >= product.price) {
         confirmBtn.disabled = false;
@@ -590,8 +575,6 @@ function openBuyModal(productId) {
 
 function closeBuyModal() {
     const modal = document.getElementById('buy-modal');
-    
-    // **فحص وجود العنصر قبل الوصول إليه**
     if (!modal) return;
     
     modal.classList.add('hidden');
@@ -600,8 +583,6 @@ function closeBuyModal() {
 
 async function confirmPurchase(productId, price) {
     const confirmBtn = document.getElementById('confirm-buy-btn');
-    
-    // **فحص وجود العنصر قبل الوصول إليه**
     if (!confirmBtn) return;
     
     const originalText = confirmBtn.textContent;
@@ -612,12 +593,11 @@ async function confirmPurchase(productId, price) {
         const result = await apiCall('/buy', { productId: productId, userId: userSession.id, price: price });
         showUserMessage(result.message, 'success');
         closeBuyModal();
-        // إعادة عرض قائمة الطلبات إذا كان المستخدم فيها
+        // تحديث عرض الطلبات إذا كان المستخدم فيها
         if (document.getElementById('nav-orders').classList.contains('border-b-2')) {
             showUserView('orders');
         }
     } catch (error) {
-        // **فحص وجود العنصر قبل الوصول إليه**
         const buyStatusEl = document.getElementById('buy-status');
         if (buyStatusEl) {
              buyStatusEl.innerHTML = `<span class="text-red-600">${error.message}</span>`;
@@ -625,12 +605,10 @@ async function confirmPurchase(productId, price) {
         showUserMessage(error.message, 'error');
     } finally {
         confirmBtn.textContent = originalText;
-        // لا نعيد تفعيل الزر هنا، يفضل إغلاق المودال أو إعادة فتحه لتحديث حالة الرصيد
     }
 }
 
 
-// ... (بقية دوال عرض محتوى المدير والإدارة لم تتغير وهي سليمة)
 // ====================================
 // 9. وظائف عرض محتوى لوحة المدير (Admin View Rendering)
 // ====================================
@@ -685,9 +663,10 @@ async function renderAdminCategoriesView(container) {
     `;
 
     const tbody = document.getElementById('admin-categories-body');
-    const currentCategories = await apiCall('/admin/categories'); // جلب البيانات المحدثة
+    // سنستخدم المتغيرات المحلية المحاكاة مباشرةً، لا حاجة لـ apiCall هنا
+    const currentCategories = categories; 
 
-    currentCategories.data.forEach(category => {
+    currentCategories.forEach(category => {
         const productCount = products.filter(p => p.categoryId === category.id).length;
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -722,6 +701,51 @@ function renderAdminSettings() {
     `;
 }
 
+async function renderAdminProductsView(container) {
+    container.innerHTML = `
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">إدارة المنتجات 🛍️</h1>
+        <button onclick="openAdminProductModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg mb-4 hover:bg-blue-700 transition duration-150 flex items-center">
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+            إضافة منتج جديد
+        </button>
+
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">#ID</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الاسم</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">السعر</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">القسم</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-products-body" class="bg-white divide-y divide-gray-200">
+                    </tbody>
+            </table>
+        </div>
+    `;
+
+    const tbody = document.getElementById('admin-products-body');
+    
+    products.forEach(product => {
+        const category = categories.find(c => c.id === product.categoryId);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${product.id}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${product.name}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-semibold">$${product.price.toFixed(2)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${category ? category.name : 'غير معروف'}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2 space-x-reverse">
+                <button onclick="openAdminProductModal(${product.id})" class="text-indigo-600 hover:text-indigo-900">تعديل</button>
+                <button onclick="deleteProduct(${product.id})" class="text-red-600 hover:text-red-900 ml-2">حذف</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+
 // ====================================
 // 10. وظائف إدارة الأقسام في لوحة المدير (Admin Category Modal)
 // ====================================
@@ -731,11 +755,7 @@ function openAdminCategoryModal(id = null, name = '', image = '') {
     const title = document.getElementById('admin-modal-title');
     const submitBtn = document.getElementById('admin-category-submit-btn');
     
-    // **فحص وجود العناصر قبل الوصول إليها**
-    if (!modal || !title || !submitBtn) {
-         console.error('Admin modal elements not found.');
-         return;
-    }
+    if (!modal || !title || !submitBtn) return;
     
     document.getElementById('category-id').value = id || '';
     document.getElementById('category-name').value = name;
@@ -755,7 +775,6 @@ function openAdminCategoryModal(id = null, name = '', image = '') {
 
 function closeAdminCategoryModal() {
     const modal = document.getElementById('admin-category-modal');
-    // **فحص وجود العنصر قبل الوصول إليه**
     if (!modal) return;
     
     modal.classList.add('hidden');
@@ -772,7 +791,6 @@ document.getElementById('admin-category-form').addEventListener('submit', async 
     const data = { action, name, image, id: id ? parseInt(id) : null };
     
     const submitBtn = document.getElementById('admin-category-submit-btn');
-    // **فحص وجود العنصر قبل الوصول إليه**
     if (!submitBtn) return;
     
     const originalText = submitBtn.textContent;
@@ -784,7 +802,6 @@ document.getElementById('admin-category-form').addEventListener('submit', async 
         showUserMessage(result.message, 'success');
         closeAdminCategoryModal();
         
-        // **فحص وجود العنصر قبل الوصول إليه**
         const adminContentArea = document.getElementById('admin-content-area');
         if(adminContentArea) {
              renderAdminCategoriesView(adminContentArea); // تحديث العرض
@@ -805,7 +822,6 @@ async function deleteCategory(id) {
         const result = await apiCall('/admin/categories', { action: 'delete', id: id });
         showUserMessage(result.message, 'success');
         
-        // **فحص وجود العنصر قبل الوصول إليه**
         const adminContentArea = document.getElementById('admin-content-area');
         if(adminContentArea) {
              renderAdminCategoriesView(adminContentArea); // تحديث العرض
@@ -815,8 +831,132 @@ async function deleteCategory(id) {
     }
 }
 
+
 // ====================================
-// 11. إطلاق التطبيق (Run App)
+// 11. وظائف إدارة المنتجات في لوحة المدير (Admin Product Modal)
+// ====================================
+
+function openAdminProductModal(id = null) {
+    const modal = document.getElementById('admin-product-modal');
+    const title = document.getElementById('admin-product-modal-title');
+    const submitBtn = document.getElementById('admin-product-submit-btn');
+    const form = document.getElementById('admin-product-form');
+    const categorySelect = document.getElementById('product-category');
+    
+    if (!modal || !title || !submitBtn || !form || !categorySelect) return;
+
+    // 1. ملء قائمة الأقسام
+    categorySelect.innerHTML = '';
+    categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.id;
+        option.textContent = cat.name;
+        categorySelect.appendChild(option);
+    });
+
+    // 2. تعبئة البيانات في حالة التعديل
+    if (id) {
+        const product = products.find(p => p.id === id);
+        if (!product) return;
+
+        title.textContent = 'تعديل المنتج';
+        submitBtn.textContent = 'حفظ التعديلات';
+        document.getElementById('product-id').value = product.id;
+        document.getElementById('product-name').value = product.name;
+        document.getElementById('product-price').value = product.price;
+        document.getElementById('product-description').value = product.description;
+        document.getElementById('product-category').value = product.categoryId;
+    } else {
+        title.textContent = 'إضافة منتج جديد';
+        submitBtn.textContent = 'إضافة المنتج';
+        form.reset();
+        document.getElementById('product-id').value = '';
+        // تعيين قيمة افتراضية لقائمة الأقسام إذا كانت غير محددة
+        if (categories.length > 0) {
+            document.getElementById('product-category').value = categories[0].id;
+        }
+    }
+
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function closeAdminProductModal() {
+    const modal = document.getElementById('admin-product-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+document.getElementById('admin-product-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('product-id').value;
+    const name = document.getElementById('product-name').value;
+    const price = parseFloat(document.getElementById('product-price').value);
+    const description = document.getElementById('product-description').value;
+    const categoryId = parseInt(document.getElementById('product-category').value);
+    
+    const action = id ? 'edit' : 'add';
+    const submitBtn = document.getElementById('admin-product-submit-btn');
+    
+    if (!submitBtn) return;
+    
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'جاري الحفظ...';
+
+    // محاكاة API لعمليات المنتجات
+    try {
+        if (action === 'add') {
+            const newId = products.length ? Math.max(...products.map(p => p.id)) + 1 : 500;
+            products.push({ id: newId, categoryId, name, price, description });
+            showUserMessage('تم إضافة المنتج بنجاح', 'success');
+        } else { // edit
+            const index = products.findIndex(p => p.id === parseInt(id));
+            if (index !== -1) {
+                products[index] = { id: parseInt(id), categoryId, name, price, description };
+                showUserMessage('تم تعديل المنتج بنجاح', 'success');
+            } else {
+                throw new Error('المنتج غير موجود.');
+            }
+        }
+        
+        closeAdminProductModal();
+        const adminContentArea = document.getElementById('admin-content-area');
+        if(adminContentArea) {
+             renderAdminProductsView(adminContentArea); // تحديث العرض
+             renderHomeView(document.getElementById('user-content-area')); // تحديث المنتجات للمستخدم أيضاً
+        }
+
+    } catch (error) {
+        showUserMessage(error.message, 'error');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+    }
+});
+
+function deleteProduct(id) {
+    if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
+
+    try {
+        products = products.filter(p => p.id !== id);
+        showUserMessage('تم حذف المنتج بنجاح', 'success');
+        
+        const adminContentArea = document.getElementById('admin-content-area');
+        if(adminContentArea) {
+             renderAdminProductsView(adminContentArea); // تحديث العرض
+             renderHomeView(document.getElementById('user-content-area')); // تحديث المنتجات للمستخدم أيضاً
+        }
+    } catch (error) {
+        showUserMessage('فشل في عملية الحذف (محاكاة).', 'error');
+    }
+}
+
+
+// ====================================
+// 12. إطلاق التطبيق (Run App)
 // ====================================
 
 // إطلاق التطبيق عند اكتمال تحميل DOM
