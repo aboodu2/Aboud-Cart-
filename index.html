@@ -3,168 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABOUD CART</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>متجر النخبة (ABD) - الرئيسية</title>
+    
+    <style>
+        /* 1. التنسيقات العامة للوضع الداكن */
+        body {
+            font-family: 'Tahoma', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212; 
+            color: #e0e0e0; 
+            direction: rtl;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 5px;
+        }
+
+        /* 2. تنسيقات شريط الرأس */
+        header { background-color: #1e1e1e; color: white; padding: 10px 0; box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4); }
+        .header-content { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; }
+        .logo { font-weight: bold; font-size: 1.5em; color: #ffc107; }
+        .user-info { display: flex; align-items: center; }
+        .user-info span { margin-left: 15px; font-size: 0.9em; color: #00e676; }
+        .menu-icon { font-size: 1.8em; cursor: pointer; padding: 0 5px; color: white; }
+        
+        /* 3. محتوى الصفحة الرئيسية والبطاقات */
+        .search-bar { padding: 15px 10px; text-align: center; }
+        .search-bar input { width: 95%; padding: 10px 15px; border-radius: 25px; border: none; background-color: #2c2c2c; color: white; font-size: 1em; text-align: right; outline: none; }
+        main { padding: 10px 0 80px 0; }
+        .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 10px; }
+        .product-card { background-color: #1e1e1e; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); transition: transform 0.3s; text-align: center; cursor: pointer; }
+        .product-card:hover { transform: scale(1.03); }
+        .product-card img { width: 100%; height: auto; display: block; min-height: 100px; object-fit: cover; }
+        .product-card h3 { color: white; font-size: 0.9em; margin: 10px 0 10px 0; padding: 0 5px; }
+        
+        /* 4. القائمة الجانبية (Sidebar) */
+        .sidebar { height: 100%; width: 300px; position: fixed; z-index: 1001; top: 0; right: 0; background-color: #1e1e1e; overflow-x: hidden; transition: transform 0.4s ease; transform: translateX(100%); box-shadow: -4px 0 10px rgba(0, 0, 0, 0.6); padding-top: 20px; }
+        .sidebar.open { transform: translateX(0); }
+        .profile-info { text-align: center; padding: 10px 0 20px 0; border-bottom: 1px solid #333; margin-bottom: 15px; }
+        .profile-info img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #ffc107; margin-bottom: 10px; }
+        .profile-info h4 { margin: 5px 0 0; color: white; font-size: 1.1em; }
+        .profile-info .vip-badge { background-color: #ffc107; color: #121212; padding: 2px 8px; border-radius: 12px; font-size: 0.7em; margin-top: 5px; display: inline-block; }
+        .sidebar-links a { padding: 15px 25px; text-decoration: none; font-size: 1em; color: #ccc; display: flex; align-items: center; justify-content: space-between; transition: background-color 0.3s, color 0.3s; border-bottom: 1px solid #2c2c2c; }
+        .sidebar-links a:hover { background-color: #2c2c2c; color: white; }
+        .sidebar-links i { font-size: 1.2em; margin-right: 15px; color: #00e676; }
+        .nav-text { display: flex; align-items: center; }
+
+        /* 5. تنسيقات صفحة تسجيل الدخول (Login) */
+        #login-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #121212;
+            z-index: 999;
+            display: none; 
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            width: 90%;
+            max-width: 400px;
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+        }
+
+        .login-container h2 { color: #ffc107; margin-bottom: 25px; border-bottom: 2px solid #333; padding-bottom: 10px; }
+        .form-group { margin-bottom: 20px; text-align: right; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 0.9em; color: #ccc; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #333; border-radius: 8px; background-color: #2c2c2c; color: white; box-sizing: border-box; font-size: 1em; transition: border-color 0.3s; }
+        .btn-primary { width: 100%; padding: 12px; border: none; border-radius: 8px; background-color: #007bff; color: white; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: background-color 0.3s; margin-top: 10px; }
+        .divider { margin: 25px 0; display: flex; align-items: center; color: #777; font-size: 0.9em; }
+        .divider::before, .divider::after { content: ''; flex-grow: 1; height: 1px; background-color: #333; }
+        .divider span { padding: 0 10px; }
+        .btn-spotify { width: 100%; padding: 12px; border: none; border-radius: 8px; background-color: #1DB954; color: white; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: background-color 0.3s; display: flex; align-items: center; justify-content: center; }
+        .links { margin-top: 20px; font-size: 0.9em; }
+        .links a { color: #00e676; text-decoration: none; margin: 0 10px; transition: color 0.3s; }
+
+        /* 6. القائمة السفلية والأزرار العائمة */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background-color: #1e1e1e; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.5); z-index: 100; }
+        .nav-item { text-align: center; color: #777; font-size: 0.8em; text-decoration: none; transition: color 0.3s; }
+        .nav-item:hover, .nav-item.active { color: #00e676; }
+        .nav-item i { display: block; font-size: 1.5em; margin-bottom: 2px; }
+        .floating-buttons { position: fixed; bottom: 90px; left: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .floating-btn { width: 50px; height: 50px; border-radius: 50%; background-color: #00e676; color: white; display: flex; justify-content: center; align-items: center; font-size: 1.8em; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); cursor: pointer; }
+
+    </style>
 </head>
 <body>
+    
+    <div id="mySidebar" class="sidebar">
+        <div class="profile-info">
+            <img src="placeholder_profile.jpg" alt="صورة الملف الشخصي">
+            <h4>عبدالباسط العبود <span class="vip-badge">VIP 10 🌟</span></h4>
+            <p style="color:#00e676">$ 1.197</p>
+        </div>
+        <div style="text-align: center; margin: 15px 0;">
+            <span style="font-size: 2em; margin: 0 10px;" onclick="alert('تم تفعيل عملة تركيا!')">🇹🇷</span> 
+            <span style="font-size: 2em; margin: 0 10px;" onclick="alert('تم تفعيل عملة بريطانيا!')">🇬🇧</span> 
+            <span style="font-size: 2em; margin: 0 10px;" onclick="alert('تم تفعيل عملة السعودية!')">🇸🇦</span>
+        </div>
+        <div style="text-align: center; padding: 10px 0;">
+            <span style="background-color: #ffc107; color: #121212; padding: 5px 15px; border-radius: 20px; font-weight: bold; cursor: pointer;" onclick="alert('تم تبديل العملة الثانوية إلى USD!')">
+                العملة الثانوية USD 🔁
+            </span>
+        </div>
+        <div class="sidebar-links">
+            <a href="#" onclick="showPage('main-content'); toggleSidebar();"><span class="nav-text"><i style="font-style: normal;">🏠</i> الرئيسية</span><span>></span></a>
+            <a href="#" onclick="showPage('login-page'); toggleSidebar();"><span class="nav-text"><i style="font-style: normal;">👤</i> تسجيل/دخول</span><span>></span></a>
+            <a href="add_balance.html"><span class="nav-text"><i style="font-style: normal;">💳</i> اضافة رصيد</span><span>></span></a>
+            <a href="payments.html"><span class="nav-text"><i style="font-style: normal;">💸</i> دفعاتي</span><span>></span></a>
+            <a href="wallet.html"><span class="nav-text"><i style="font-style: normal;">💼</i> محفظتي</span><span>></span></a>
+             <a href="orders.html" style="background-color: #2c2c2c;"><span class="nav-text"><i style="font-style: normal; color: red;">🛒</i> طلباتي</span><span>></span></a>
+            <a href="security.html"><span class="nav-text"><i style="font-style: normal;">🛡️</i> الحماية</span><span>></span></a>
+            <a href="admin.html"><span class="nav-text"><i style="font-style: normal;">⚙️</i> لوحة الإدارة (Admin)</span><span>></span></a>
+            <a href="agents.html"><span class="nav-text"><i style="font-style: normal;">🤝</i> وكلاؤنا</span><span>></span></a>
+            <a href="about.html"><span class="nav-text"><i style="font-style: normal;">ℹ️</i> من نحن</span><span>></span></a>
+        </div>
+    </div>
+    
+    <header>
+        <div class="header-content">
+            <div class="logo">ALNUKHBA STORE</div>
+            <div class="user-info">
+                <span>VIP 🌟</span>
+                <span>$ 1.197</span>
+                <span class="menu-icon" onclick="toggleSidebar()">☰</span>
+            </div>
+        </div>
+    </header>
 
     <div id="main-content">
-        
-        <div id="login-view" class="min-h-screen flex items-center justify-center login-bg">
-            <div class="w-full max-w-md p-8 space-y-8 bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl border border-white/20 login-card">
-                <div class="flex flex-col items-center">
-                    <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                    <h2 class="text-3xl font-extrabold text-white mt-4">
-                        تسجيل الدخول إلى ABOUD CART
-                    </h2>
-                    <p class="text-gray-300 mt-2">متعة التسوق الرقمي تبدأ هنا</p>
-                </div>
-                
-                <form id="login-form" class="space-y-6">
-                    <div id="login-message" class="text-sm text-center font-medium p-3 rounded-md hidden"></div>
-
-                    <div>
-                        <label for="email" class="sr-only">البريد الإلكتروني</label>
-                        <input id="email" name="email" type="email" autocomplete="email" required 
-                            class="appearance-none rounded-lg relative block w-full px-4 py-3 border-none bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:z-10 sm:text-base transition duration-200" 
-                            placeholder="البريد الإلكتروني">
-                    </div>
-                    <div>
-                        <label for="password" class="sr-only">كلمة المرور</label>
-                        <input id="password" name="password" type="password" autocomplete="current-password" required 
-                            class="appearance-none rounded-lg relative block w-full px-4 py-3 border-none bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 focus:z-10 sm:text-base transition duration-200" 
-                            placeholder="كلمة المرور">
-                    </div>
-                    
-                    <div>
-                        <button type="submit" class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-lg text-gray-800 bg-white hover:bg-gray-200 transition duration-150 ease-in-out shadow-lg transform hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-white focus:ring-opacity-50">
-                            تسجيل الدخول
-                        </button>
-                    </div>
-                </form>
-                <div class="text-center text-sm text-gray-400 mt-4">
-                    <p>للتجربة: استخدم `user@test.com` أو `aboabood2002r@gmail.com`</p>
-                </div>
+        <div class="container">
+            <div class="search-bar">
+                <input type="text" placeholder="🔍 بحث..." onkeydown="if(event.key === 'Enter') handleSearch(this.value);">
             </div>
-        </div>
-
-        <div id="user-view" class="hidden min-h-screen flex flex-col">
-            
-            <header class="bg-white shadow-md sticky top-0 z-10">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
-                    <div class="flex items-center space-x-4 space-x-reverse">
-                        <span class="text-xl font-bold text-gray-800">ABOUD CART</span>
-                    </div>
-                    <div class="flex items-center space-x-4 space-x-reverse">
-                        <div id="user-balance" class="bg-green-100 text-green-800 text-sm font-semibold px-3 py-1 rounded-full flex items-center">
-                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V9a1 1 0 00-1-1H7m5 4v1a1 1 0 001 1h3m-4 5h4m-4 0a9 9 0 110-18 9 9 0 010 18z"></path></svg>
-                            الرصيد: $0.00
-                        </div>
-                        <button onclick="logout()" class="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition duration-150">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            </header>
-
-            <main class="flex-grow p-4 md:p-6 pb-20 max-w-7xl mx-auto w-full">
-                <div id="user-messages" class="mb-4 hidden p-3 rounded-lg text-sm font-medium"></div>
-
-                <div id="user-content-area">
-                    </div>
+            <main class="products-grid">
+                <div class="product-card" onclick="alert('جارٍ فتح قسم الرصيد...')"><img src="placeholder_balance.jpg" alt="قسم الرصيد"><h3>قسم الرصيد</h3></div>
+                <div class="product-card" onclick="alert('جارٍ فتح تطبيقات التلفزيون...')"><img src="placeholder_tv.jpg" alt="تطبيقات التلفزيون"><h3>تطبيقات التلفزيون</h3></div>
+                <div class="product-card" onclick="alert('جارٍ فتح العملات الرقمية...')"><img src="placeholder_crypto.jpg" alt="العملات الرقمية"><h3>العملات الرقمية</h3></div>
+                <div class="product-card" onclick="alert('جارٍ فتح الخدمات المتنوعة...')"><img src="placeholder_services.jpg" alt="خدمات متنوعة"><h3>خدمات متنوعة</h3></div>
+                <div class="product-card" onclick="alert('جارٍ فتح توثيق الحسابات...')"><img src="placeholder_auth.jpg" alt="توثيق الحسابات"><h3>توثيق الحسابات</h3></div>
+                <div class="product-card" onclick="alert('جارٍ فتح بطاقات المتاجر...')"><img src="placeholder_cards.jpg" alt="بطاقات المتاجر"><h3>بطاقات المتاجر</h3></div>
             </main>
-
-            <nav class="fixed inset-x-0 bottom-0 z-20 bg-white border-t border-gray-200 shadow-lg md:hidden">
-                <div class="flex justify-around items-center h-16 max-w-lg mx-auto">
-                    <button onclick="showUserView('home')" id="nav-home" class="nav-item flex flex-col items-center justify-center p-2 text-gray-800 transition duration-150 ease-in-out border-b-2 border-gray-800">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-                        <span class="text-xs mt-1">الرئيسية</span>
-                    </button>
-                    <button onclick="showUserView('orders')" id="nav-orders" class="nav-item flex flex-col items-center justify-center p-2 text-gray-500 hover:text-gray-800 transition duration-150 ease-in-out">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                        <span class="text-xs mt-1">طلباتي</span>
-                    </button>
-                    <button onclick="showUserView('support')" id="nav-support" class="nav-item flex flex-col items-center justify-center p-2 text-gray-500 hover:text-gray-800 transition duration-150 ease-in-out">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 0a10.057 10.057 0 01-2.224.232l-2.071-.828a1.002 1.002 0 00-1.115.344l-1.42 1.42a1.002 1.002 0 00-.344 1.115l.828 2.07a10.057 10.057 0 01-.232 2.224m0 0l-3.536 3.536M4.5 4.5l7 7m0 0l7-7M4.5 19.5l7-7m0 0l7 7"></path></svg>
-                        <span class="text-xs mt-1">الدعم</span>
-                    </button>
-                    <button onclick="showUserView('profile')" id="nav-profile" class="nav-item flex flex-col items-center justify-center p-2 text-gray-500 hover:text-gray-800 transition duration-150 ease-in-out">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        <span class="text-xs mt-1">حسابي</span>
-                    </button>
-                </div>
-            </nav>
-        </div>
-
-        <div id="admin-view" class="hidden min-h-screen flex">
-            <aside class="admin-sidebar bg-gray-800 text-white flex-shrink-0 p-4 min-h-screen sticky top-0">
-                <h1 class="text-2xl font-bold mb-8 text-center border-b border-gray-700 pb-4">لوحة المدير</h1>
-                <nav class="space-y-2">
-                    <button onclick="showAdminView('dashboard')" id="admin-nav-dashboard" class="flex items-center w-full p-3 rounded-lg bg-gray-700 hover:bg-gray-700 transition duration-150 ease-in-out">
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-8v8m-4-8v8M4 16h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1z"></path></svg>
-                        <span>الرئيسية</span>
-                    </button>
-                    <button onclick="showAdminView('orders')" id="admin-nav-orders" class="flex items-center w-full p-3 rounded-lg text-gray-300 hover:bg-gray-700 transition duration-150 ease-in-out">
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
-                        <span>إدارة الطلبات</span>
-                    </button>
-                    <button onclick="showAdminView('categories')" id="admin-nav-categories" class="flex items-center w-full p-3 rounded-lg text-gray-300 hover:bg-gray-700 transition duration-150 ease-in-out">
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                        <span>إدارة الأقسام</span>
-                    </button>
-                    <button onclick="showAdminView('settings')" id="admin-nav-settings" class="flex items-center w-full p-3 rounded-lg text-gray-300 hover:bg-gray-700 transition duration-150 ease-in-out">
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.82 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.82 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.82-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.82-3.31 2.37-2.37.996.608 2.227.608 3.223 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                        <span>الإعدادات</span>
-                    </button>
-                </nav>
-                <div class="mt-8 pt-4 border-t border-gray-700">
-                    <button onclick="logout()" class="flex items-center w-full p-3 rounded-lg text-red-400 hover:bg-gray-700 transition duration-150 ease-in-out">
-                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                        <span>تسجيل الخروج</span>
-                    </button>
-                </div>
-            </aside>
-
-            <main id="admin-content-area" class="flex-grow p-4 md:p-8">
-                </main>
         </div>
     </div>
 
-    <div id="buy-modal" class="fixed inset-0 bg-gray-600 bg-opacity-75 hidden items-center justify-center z-30">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 p-6" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-            <h3 id="modal-title" class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">إتمام عملية الشراء</h3>
-            <div id="modal-content">
+    <div id="login-page">
+        <div class="login-container">
+             <a href="#" onclick="showPage('main-content');" style="position: absolute; top: 15px; right: 15px; color: #ffc107; text-decoration: none; font-size: 1.5em;">&times;</a>
+            <h2>تسجيل الدخول إلى المتجر</h2>
+            <form action="#" method="post">
+                <div class="form-group">
+                    <label for="username">البريد الإلكتروني أو اسم المستخدم:</label>
+                    <input type="text" id="username" name="username" required>
                 </div>
-            <div class="mt-6 flex justify-end space-x-2 space-x-reverse">
-                <button onclick="closeBuyModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition duration-150">إلغاء</button>
-                <button id="confirm-buy-btn" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition duration-150" disabled>تأكيد الشراء</button>
+                <div class="form-group">
+                    <label for="password">كلمة المرور:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="button" class="btn-primary" onclick="handleLoginSubmit()">تسجيل الدخول</button>
+            </form>
+            <div class="divider">
+                <span>أو</span>
+            </div>
+            <button class="btn-spotify" onclick="alert('تنبيه: يجب ربط هذا بزر مصادقة Spotify الفعلي.')">
+                تسجيل الدخول باستخدام Spotify 🎵
+            </button>
+            <div class="links">
+                <a href="forgot_password.html">هل نسيت كلمة المرور؟</a> |
+                <a href="register.html">إنشاء حساب جديد</a>
             </div>
         </div>
     </div>
-
-    <div id="admin-category-modal" class="fixed inset-0 bg-gray-600 bg-opacity-75 hidden items-center justify-center z-30">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-xl mx-4 p-6" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
-            <h3 id="admin-modal-title" class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">إدارة قسم</h3>
-            <form id="admin-category-form" class="space-y-4">
-                <input type="hidden" id="category-id">
-                <div>
-                    <label for="category-name" class="block text-sm font-medium text-gray-700">اسم القسم</label>
-                    <input type="text" id="category-name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800 sm:text-sm p-2">
-                </div>
-                <div>
-                    <label for="category-image" class="block text-sm font-medium text-gray-700">رابط أيقونة/صورة القسم (URL)</label>
-                    <input type="url" id="category-image" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-gray-800 focus:ring-gray-800 sm:text-sm p-2">
-                </div>
-                <div class="mt-6 flex justify-end space-x-2 space-x-reverse">
-                    <button type="button" onclick="closeAdminCategoryModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition duration-150">إلغاء</button>
-                    <button type="submit" id="admin-category-submit-btn" class="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-gray-900 transition duration-150">حفظ القسم</button>
-                </div>
-            </form>
-        </div>
+    
+    <div class="floating-buttons">
+        <div class="floating-btn" style="background-color: #00c853;" onclick="alert('جارٍ فتح الدردشة (الدعم الفني)...')">✉️</div>
+        <div class="floating-btn" style="background-color: #0d47a1;" onclick="alert('جارٍ فتح الإعدادات...')">⚙️</div>
     </div>
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" onclick="showPage('main-content'); setActiveNav(this);"><i style="font-style: normal;">🏠</i> الرئيسية</a>
+        <a href="cart.html" class="nav-item" onclick="setActiveNav(this);"><i style="font-style: normal;">🛒</i> السلة</a>
+        <a href="notifications.html" class="nav-item" onclick="setActiveNav(this);"><i style="font-style: normal;">🔔</i> الإشعارات</a>
+        <a href="#" class="nav-item" onclick="showPage('login-page'); setActiveNav(this);"><i style="font-style: normal;">👤</i> حسابي</a>
+    </nav>
+    
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById("mySidebar");
+            sidebar.classList.toggle("open");
+        }
 
-    <script src="script.js"></script>
+        function showPage(pageId) {
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('login-page').style.display = 'none';
+
+            if (pageId === 'main-content') {
+                document.getElementById('main-content').style.display = 'block';
+            } else if (pageId === 'login-page') {
+                document.getElementById('login-page').style.display = 'flex';
+            }
+        }
+        
+        function setActiveNav(element) {
+            var navItems = document.querySelectorAll('.bottom-nav .nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function handleLoginSubmit() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username && password) {
+                 alert(`تمت محاولة تسجيل الدخول:\nالمستخدم: ${username}\nكلمة المرور: ${password}\n(يتطلب خادمًا لإتمام العملية)`);
+            } else {
+                alert('الرجاء إدخال بيانات الدخول.');
+            }
+        }
+        
+        function handleSearch(query) {
+            if (query.trim()) {
+                alert(`جارٍ البحث عن: "${query.trim()}"`);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('main-content');
+            document.querySelector('.bottom-nav .nav-item').classList.add('active');
+        });
+    </script>
 </body>
 </html>
