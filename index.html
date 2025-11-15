@@ -1,249 +1,471 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر النخبة (ABD) - الرئيسية</title>
-    
-    <style>
-        /* 1. التنسيقات العامة للوضع الداكن */
-        body {
-            font-family: 'Tahoma', 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #121212; 
-            color: #e0e0e0; 
-            direction: rtl;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        .container {
-            width: 95%;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 5px;
-        }
-
-        /* 2. تنسيقات شريط الرأس */
-        header { background-color: #1e1e1e; color: white; padding: 10px 0; box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4); }
-        .header-content { display: flex; justify-content: space-between; align-items: center; padding: 0 10px; }
-        .logo { font-weight: bold; font-size: 1.5em; color: #ffc107; }
-        .user-info { display: flex; align-items: center; }
-        .user-info span { margin-left: 15px; font-size: 0.9em; color: #00e676; }
-        .menu-icon { font-size: 1.8em; cursor: pointer; padding: 0 5px; color: white; }
-        
-        /* 3. محتوى الصفحة الرئيسية والبطاقات */
-        .search-bar { padding: 15px 10px; text-align: center; }
-        .search-bar input { width: 95%; padding: 10px 15px; border-radius: 25px; border: none; background-color: #2c2c2c; color: white; font-size: 1em; text-align: right; outline: none; }
-        main { padding: 10px 0 80px 0; }
-        .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 10px; }
-        .product-card { background-color: #1e1e1e; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); transition: transform 0.3s; text-align: center; cursor: pointer; }
-        .product-card:hover { transform: scale(1.03); }
-        .product-card img { width: 100%; height: auto; display: block; min-height: 100px; object-fit: cover; }
-        .product-card h3 { color: white; font-size: 0.9em; margin: 10px 0 10px 0; padding: 0 5px; }
-        
-        /* 4. القائمة الجانبية (Sidebar) */
-        .sidebar { height: 100%; width: 300px; position: fixed; z-index: 1001; top: 0; right: 0; background-color: #1e1e1e; overflow-x: hidden; transition: transform 0.4s ease; transform: translateX(100%); box-shadow: -4px 0 10px rgba(0, 0, 0, 0.6); padding-top: 20px; }
-        .sidebar.open { transform: translateX(0); }
-        .profile-info { text-align: center; padding: 10px 0 20px 0; border-bottom: 1px solid #333; margin-bottom: 15px; }
-        .profile-info img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #ffc107; margin-bottom: 10px; }
-        .profile-info h4 { margin: 5px 0 0; color: white; font-size: 1.1em; }
-        .profile-info .vip-badge { background-color: #ffc107; color: #121212; padding: 2px 8px; border-radius: 12px; font-size: 0.7em; margin-top: 5px; display: inline-block; }
-        .sidebar-links a { padding: 15px 25px; text-decoration: none; font-size: 1em; color: #ccc; display: flex; align-items: center; justify-content: space-between; transition: background-color 0.3s, color 0.3s; border-bottom: 1px solid #2c2c2c; }
-        .sidebar-links a:hover { background-color: #2c2c2c; color: white; }
-        .sidebar-links i { font-size: 1.2em; margin-right: 15px; color: #00e676; }
-        .nav-text { display: flex; align-items: center; }
-
-        /* 5. تنسيقات صفحة تسجيل الدخول (Login) */
-        #login-page {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #121212;
-            z-index: 999;
-            display: none; 
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-container {
-            width: 90%;
-            max-width: 400px;
-            background-color: #1e1e1e;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-            text-align: center;
-            position: relative;
-        }
-
-        .login-container h2 { color: #ffc107; margin-bottom: 25px; border-bottom: 2px solid #333; padding-bottom: 10px; }
-        .form-group { margin-bottom: 20px; text-align: right; }
-        .form-group label { display: block; margin-bottom: 8px; font-size: 0.9em; color: #ccc; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid #333; border-radius: 8px; background-color: #2c2c2c; color: white; box-sizing: border-box; font-size: 1em; transition: border-color 0.3s; }
-        .btn-primary { width: 100%; padding: 12px; border: none; border-radius: 8px; background-color: #007bff; color: white; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: background-color 0.3s; margin-top: 10px; }
-        .divider { margin: 25px 0; display: flex; align-items: center; color: #777; font-size: 0.9em; }
-        .divider::before, .divider::after { content: ''; flex-grow: 1; height: 1px; background-color: #333; }
-        .divider span { padding: 0 10px; }
-        .btn-spotify { width: 100%; padding: 12px; border: none; border-radius: 8px; background-color: #1DB954; color: white; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: background-color 0.3s; display: flex; align-items: center; justify-content: center; }
-        .links { margin-top: 20px; font-size: 0.9em; }
-        .links a { color: #00e676; text-decoration: none; margin: 0 10px; transition: color 0.3s; }
-
-        /* 6. القائمة السفلية والأزرار العائمة */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background-color: #1e1e1e; display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.5); z-index: 100; }
-        .nav-item { text-align: center; color: #777; font-size: 0.8em; text-decoration: none; transition: color 0.3s; }
-        .nav-item:hover, .nav-item.active { color: #00e676; }
-        .nav-item i { display: block; font-size: 1.5em; margin-bottom: 2px; }
-        .floating-buttons { position: fixed; bottom: 90px; left: 10px; display: flex; flex-direction: column; gap: 10px; }
-        .floating-btn { width: 50px; height: 50px; border-radius: 50%; background-color: #00e676; color: white; display: flex; justify-content: center; align-items: center; font-size: 1.8em; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); cursor: pointer; }
-
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>متجر + لوحة إدارة (نسخة HTML)</title>
+  <style>
+    :root{
+      --bg:#0f1720; --panel:#101217; --muted:#99a0b3; --accent:#8b5cf6; --card:#111318;
+      --light-bg:#f6f7fb; --light-panel:#fff; --light-text:#0b1220;
+    }
+    html,body{height:100%; margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans Arabic',sans-serif;}
+    body{background:var(--bg); color:#e6eef8; display:flex; min-height:100vh;}
+    .container{display:flex; width:100%;}
+    /* Sidebar */
+    .sidebar{width:320px; max-width:38vw; background:linear-gradient(180deg,#0b0d11, #121316); padding:20px; box-sizing:border-box; box-shadow:6px 0 18px rgba(0,0,0,0.6);}
+    .profile{display:flex; gap:12px; align-items:center; margin-bottom:18px}
+    .avatar{width:64px; height:64px; border-radius:50%; background:conic-gradient(from 180deg,#7c3aed,#06b6d4); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:20px;}
+    .user-info{flex:1}
+    .user-name{font-weight:700; font-size:16px}
+    .user-sub{color:var(--muted); font-size:13px; margin-top:6px}
+    /* nav */
+    .nav{margin-top:6px; display:flex; flex-direction:column; gap:8px}
+    .nav a{display:flex; align-items:center; gap:10px; padding:12px; border-radius:8px; text-decoration:none; color:inherit;}
+    .nav a .ico{width:36px; text-align:center}
+    .nav a:hover{background:rgba(255,255,255,0.03)}
+    .nav a.active{background:rgba(255,255,255,0.06)}
+    .divider{height:1px; background:rgba(255,255,255,0.04); margin:12px 0}
+    .dark-toggle{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:14px}
+    .toggle-btn{width:46px; height:26px; background:#2b2b2b; border-radius:20px; position:relative; cursor:pointer}
+    .toggle-knob{width:18px; height:18px; background:#fff; border-radius:50%; position:absolute; top:4px; left:4px; transition:all .18s}
+    /* content */
+    .main{flex:1; padding:20px; box-sizing:border-box; overflow:auto}
+    header.top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:18px}
+    .search{display:flex; gap:8px; align-items:center}
+    .search input{padding:10px 12px; border-radius:12px; border:0; background:#0b1116; color:inherit}
+    h1{margin:0 0 6px 0}
+    /* Grid */
+    .grid{display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:14px}
+    .card{background:var(--card); padding:12px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.5)}
+    .card .img{height:96px; border-radius:8px; background:linear-gradient(90deg,#0f1720,#101827); margin-bottom:8px}
+    .price{font-weight:700; color:#9ae6b4}
+    .buy{margin-top:8px; width:100%; padding:8px; background:#ef4444; border:0; color:#fff; border-radius:8px; cursor:pointer}
+    /* Admin */
+    .admin-panel{background:linear-gradient(180deg,#071018, #07121a); padding:16px; border-radius:12px}
+    .stats{display:flex; gap:12px; flex-wrap:wrap}
+    .stat{flex:1; min-width:160px; background:#071b2a; padding:12px; border-radius:10px}
+    .stat .label{color:var(--muted); font-size:13px}
+    .stat .val{font-size:20px; font-weight:700}
+    .orders-table{margin-top:12px; overflow:auto}
+    table{width:100%; border-collapse:collapse; font-size:14px}
+    th,td{padding:8px 10px; text-align:right; border-bottom:1px solid rgba(255,255,255,0.03)}
+    /* light mode */
+    .light body-mode{--bg:var(--light-bg); --panel:var(--light-panel); --muted:#4b5563; --card:#fff; color:var(--light-text)}
+    /* small screens */
+    @media (max-width:780px){
+      .sidebar{position:fixed; left:0; top:0; bottom:0; transform:translateX(0); z-index:30; width:78%; max-width:320px; transition:transform .18s}
+      .sidebar.hidden{transform:translateX(-110%)}
+      .main{padding:14px}
+    }
+    /* rtl small polish */
+    .rtl-right{margin-right:8px}
+    /* login modal */
+    .modal{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:60}
+    .modal .box{background:var(--panel); padding:18px; border-radius:10px; width:320px; max-width:92%}
+    .btn{padding:10px 12px; border-radius:8px; border:0; cursor:pointer}
+    .btn-primary{background:var(--accent); color:white}
+    .small-muted{color:var(--muted); font-size:13px}
+  </style>
 </head>
 <body>
-    
-    <div id="mySidebar" class="sidebar">
-        <div class="profile-info">
-            <img src="placeholder_profile.jpg" alt="صورة الملف الشخصي">
-            <h4>عبدالباسط العبود <span class="vip-badge">VIP 10 🌟</span></h4>
-            <p style="color:#00e676">$ 1.197</p>
+  <div class="container" id="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="profile">
+        <div class="avatar" id="avatar">عب</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">عبدالباسط العبود</div>
+          <div class="user-sub" id="userSub">VIP 10 • $1.197</div>
         </div>
-        <div style="text-align: center; margin: 15px 0;">
-            <span style="font-size: 2em; margin: 0 10px;" onclick="alert('تم تفعيل عملة تركيا!')">🇹🇷</span> 
-            <span style="font-size: 2em; margin: 0 10px;" onclick="alert('تم تفعيل عملة بريطانيا!')">🇬🇧</span> 
-            <span style="font-size: 2em; margin: 0 10px;" onclick="alert('تم تفعيل عملة السعودية!')">🇸🇦</span>
+      </div>
+
+      <nav class="nav">
+        <a href="#" data-view="shop" class="active"><span class="ico">🏠</span><span>الرئيسية</span></a>
+        <a href="#" data-view="topup"><span class="ico">💳</span><span>اضافة رصيد</span></a>
+        <a href="#" data-view="payments"><span class="ico">💸</span><span>دفعاتي</span></a>
+        <a href="#" data-view="wallets"><span class="ico">💼</span><span>محفظتي</span></a>
+        <a href="#" data-view="orders"><span class="ico">🛒</span><span>طلباتي</span></a>
+        <a href="#" data-view="admin" id="adminLink"><span class="ico">🧾</span><span>لوحة الإدارة</span></a>
+      </nav>
+
+      <div class="divider"></div>
+
+      <div class="dark-toggle">
+        <div>الوضع الداكن</div>
+        <div class="toggle-btn" id="darkToggle"><div class="toggle-knob" id="toggleKnob"></div></div>
+      </div>
+
+      <div style="height:12px"></div>
+      <div class="small-muted">أدوات سريعة</div>
+      <div style="margin-top:8px; display:flex; gap:8px">
+        <button class="btn" id="openSearch">🔎</button>
+        <button class="btn" id="openWhats">💬</button>
+        <button class="btn" id="openShare">↗️</button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+      <header class="top">
+        <div>
+          <h1 id="pageTitle">المتجر</h1>
+          <div class="small-muted" id="pageSub">تسوق خدمات إلكترونية سريعة</div>
         </div>
-        <div style="text-align: center; padding: 10px 0;">
-            <span style="background-color: #ffc107; color: #121212; padding: 5px 15px; border-radius: 20px; font-weight: bold; cursor: pointer;" onclick="alert('تم تبديل العملة الثانوية إلى USD!')">
-                العملة الثانوية USD 🔁
-            </span>
+        <div class="search">
+          <input placeholder="ابحث عن خدمة..." id="searchInput" />
+          <button class="btn btn-primary" id="btnLogin">تسجيل المشرف</button>
         </div>
-        <div class="sidebar-links">
-            <a href="#" onclick="showPage('main-content'); toggleSidebar();"><span class="nav-text"><i style="font-style: normal;">🏠</i> الرئيسية</span><span>></span></a>
-            <a href="#" onclick="showPage('login-page'); toggleSidebar();"><span class="nav-text"><i style="font-style: normal;">👤</i> تسجيل/دخول</span><span>></span></a>
-            <a href="add_balance.html"><span class="nav-text"><i style="font-style: normal;">💳</i> اضافة رصيد</span><span>></span></a>
-            <a href="payments.html"><span class="nav-text"><i style="font-style: normal;">💸</i> دفعاتي</span><span>></span></a>
-            <a href="wallet.html"><span class="nav-text"><i style="font-style: normal;">💼</i> محفظتي</span><span>></span></a>
-             <a href="orders.html" style="background-color: #2c2c2c;"><span class="nav-text"><i style="font-style: normal; color: red;">🛒</i> طلباتي</span><span>></span></a>
-            <a href="security.html"><span class="nav-text"><i style="font-style: normal;">🛡️</i> الحماية</span><span>></span></a>
-            <a href="admin.html"><span class="nav-text"><i style="font-style: normal;">⚙️</i> لوحة الإدارة (Admin)</span><span>></span></a>
-            <a href="agents.html"><span class="nav-text"><i style="font-style: normal;">🤝</i> وكلاؤنا</span><span>></span></a>
-            <a href="about.html"><span class="nav-text"><i style="font-style: normal;">ℹ️</i> من نحن</span><span>></span></a>
-        </div>
-    </div>
-    
-    <header>
-        <div class="header-content">
-            <div class="logo">ALNUKHBA STORE</div>
-            <div class="user-info">
-                <span>VIP 🌟</span>
-                <span>$ 1.197</span>
-                <span class="menu-icon" onclick="toggleSidebar()">☰</span>
+      </header>
+
+      <!-- Views -->
+      <section id="viewShop">
+        <div class="grid" id="productsGrid"></div>
+      </section>
+
+      <section id="viewAdmin" style="display:none">
+        <div class="admin-panel">
+          <h2>لوحة الإدارة</h2>
+          <p class="small-muted">نظرة عامة سريعة على المستخدمين والطلبات والرصيد</p>
+          <div class="stats" style="margin-top:12px">
+            <div class="stat">
+              <div class="label">المستخدمون</div>
+              <div class="val" id="statUsers">0</div>
             </div>
-        </div>
-    </header>
-
-    <div id="main-content">
-        <div class="container">
-            <div class="search-bar">
-                <input type="text" placeholder="🔍 بحث..." onkeydown="if(event.key === 'Enter') handleSearch(this.value);">
+            <div class="stat">
+              <div class="label">الطلبات</div>
+              <div class="val" id="statOrders">0</div>
             </div>
-            <main class="products-grid">
-                <div class="product-card" onclick="alert('جارٍ فتح قسم الرصيد...')"><img src="placeholder_balance.jpg" alt="قسم الرصيد"><h3>قسم الرصيد</h3></div>
-                <div class="product-card" onclick="alert('جارٍ فتح تطبيقات التلفزيون...')"><img src="placeholder_tv.jpg" alt="تطبيقات التلفزيون"><h3>تطبيقات التلفزيون</h3></div>
-                <div class="product-card" onclick="alert('جارٍ فتح العملات الرقمية...')"><img src="placeholder_crypto.jpg" alt="العملات الرقمية"><h3>العملات الرقمية</h3></div>
-                <div class="product-card" onclick="alert('جارٍ فتح الخدمات المتنوعة...')"><img src="placeholder_services.jpg" alt="خدمات متنوعة"><h3>خدمات متنوعة</h3></div>
-                <div class="product-card" onclick="alert('جارٍ فتح توثيق الحسابات...')"><img src="placeholder_auth.jpg" alt="توثيق الحسابات"><h3>توثيق الحسابات</h3></div>
-                <div class="product-card" onclick="alert('جارٍ فتح بطاقات المتاجر...')"><img src="placeholder_cards.jpg" alt="بطاقات المتاجر"><h3>بطاقات المتاجر</h3></div>
-            </main>
-        </div>
-    </div>
-
-    <div id="login-page">
-        <div class="login-container">
-             <a href="#" onclick="showPage('main-content');" style="position: absolute; top: 15px; right: 15px; color: #ffc107; text-decoration: none; font-size: 1.5em;">&times;</a>
-            <h2>تسجيل الدخول إلى المتجر</h2>
-            <form action="#" method="post">
-                <div class="form-group">
-                    <label for="username">البريد الإلكتروني أو اسم المستخدم:</label>
-                    <input type="text" id="username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <label for="password">كلمة المرور:</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-                <button type="button" class="btn-primary" onclick="handleLoginSubmit()">تسجيل الدخول</button>
-            </form>
-            <div class="divider">
-                <span>أو</span>
+            <div class="stat">
+              <div class="label">الرصيد الكلي</div>
+              <div class="val" id="statBalance">$0.000</div>
             </div>
-            <button class="btn-spotify" onclick="alert('تنبيه: يجب ربط هذا بزر مصادقة Spotify الفعلي.')">
-                تسجيل الدخول باستخدام Spotify 🎵
-            </button>
-            <div class="links">
-                <a href="forgot_password.html">هل نسيت كلمة المرور؟</a> |
-                <a href="register.html">إنشاء حساب جديد</a>
+          </div>
+
+          <div style="margin-top:14px">
+            <h3>طلبات API (لمحة سريعة)</h3>
+            <div class="orders-table">
+              <table id="ordersTable">
+                <thead><tr><th>الرقم</th><th>المستخدم</th><th>المبلغ</th><th>الحالة</th></tr></thead>
+                <tbody></tbody>
+              </table>
             </div>
+          </div>
+
+          <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap">
+            <button class="btn btn-primary" id="seedBtn">إنشاء بيانات تجريبية</button>
+            <button class="btn" id="clearBtn">مسح البيانات</button>
+          </div>
         </div>
+      </section>
+
+      <section id="viewTopup" style="display:none">
+        <div class="card">
+          <h3>اضافة رصيد تجريبي</h3>
+          <div style="margin-top:8px">
+            <label>المبلغ (USD)</label>
+            <input id="topupAmount" style="width:120px;padding:8px;border-radius:8px;border:0;background:#0b1116;color:inherit;margin-right:8px" />
+            <button class="btn btn-primary" id="doTopup">اضافة</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="viewPayments" style="display:none">
+        <div class="card">
+          <h3>دفعاتي</h3>
+          <p class="small-muted">قائمة الدفعات (تجريبية)</p>
+        </div>
+      </section>
+
+      <section id="viewWallets" style="display:none">
+        <div class="card">
+          <h3>محفظتي</h3>
+          <p class="small-muted">تفاصيل المحفظة (تجريبية)</p>
+        </div>
+      </section>
+
+      <section id="viewOrders" style="display:none">
+        <div class="card">
+          <h3>طلباتي</h3>
+          <div style="margin-top:8px" id="myOrdersList"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal" style="display:none">
+    <div class="box">
+      <h3>تسجيل دخول المشرف</h3>
+      <p class="small-muted">ادخل كلمة المرور الخاصة بالمشرف (تجريبي)</p>
+      <div style="margin-top:12px">
+        <input id="adminPass" placeholder="كلمة المرور" style="width:100%;padding:10px;border-radius:8px;border:0;background:#0b1116;color:inherit" />
+      </div>
+      <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end">
+        <button class="btn" id="cancelLogin">إلغاء</button>
+        <button class="btn btn-primary" id="confirmLogin">دخول</button>
+      </div>
     </div>
-    
-    <div class="floating-buttons">
-        <div class="floating-btn" style="background-color: #00c853;" onclick="alert('جارٍ فتح الدردشة (الدعم الفني)...')">✉️</div>
-        <div class="floating-btn" style="background-color: #0d47a1;" onclick="alert('جارٍ فتح الإعدادات...')">⚙️</div>
-    </div>
-    <nav class="bottom-nav">
-        <a href="#" class="nav-item active" onclick="showPage('main-content'); setActiveNav(this);"><i style="font-style: normal;">🏠</i> الرئيسية</a>
-        <a href="cart.html" class="nav-item" onclick="setActiveNav(this);"><i style="font-style: normal;">🛒</i> السلة</a>
-        <a href="notifications.html" class="nav-item" onclick="setActiveNav(this);"><i style="font-style: normal;">🔔</i> الإشعارات</a>
-        <a href="#" class="nav-item" onclick="showPage('login-page'); setActiveNav(this);"><i style="font-style: normal;">👤</i> حسابي</a>
-    </nav>
-    
-    <script>
-        function toggleSidebar() {
-            var sidebar = document.getElementById("mySidebar");
-            sidebar.classList.toggle("open");
-        }
+  </div>
 
-        function showPage(pageId) {
-            document.getElementById('main-content').style.display = 'none';
-            document.getElementById('login-page').style.display = 'none';
+  <script>
+    // ---------- Demo data & helpers ----------
+    const demoProducts = Array.from({length:9}).map((_,i)=>({
+      id: 'p'+(i+1),
+      title: 'خدمة رقم ' + (i+1),
+      price: ((i+1)*0.25).toFixed(3)
+    }));
+    let state = {
+      products: demoProducts,
+      orders: JSON.parse(localStorage.getItem('demo_orders')||'[]'),
+      usersCount: Number(localStorage.getItem('demo_users')||3),
+      balance: Number(localStorage.getItem('demo_balance')||1.197)
+    };
 
-            if (pageId === 'main-content') {
-                document.getElementById('main-content').style.display = 'block';
-            } else if (pageId === 'login-page') {
-                document.getElementById('login-page').style.display = 'flex';
-            }
-        }
-        
-        function setActiveNav(element) {
-            var navItems = document.querySelectorAll('.bottom-nav .nav-item');
-            navItems.forEach(item => item.classList.remove('active'));
-            element.classList.add('active');
-        }
+    const el = id => document.getElementById(id);
+    const qs = s => document.querySelector(s);
+    const qsa = s => document.querySelectorAll(s);
 
-        function handleLoginSubmit() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+    // ---------- Render products ----------
+    function renderProducts(filter=''){
+      const grid = el('productsGrid');
+      grid.innerHTML = '';
+      const items = state.products.filter(p => p.title.includes(filter) || p.price.includes(filter));
+      items.forEach(p=>{
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="img"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px">
+            <div style="text-align:right">
+              <div style="font-weight:700">${p.title}</div>
+              <div class="small-muted" style="margin-top:6px">وصف قصير للخدمة</div>
+            </div>
+            <div style="text-align:left">
+              <div class="price">$${p.price}</div>
+              <button class="buy" data-id="${p.id}">اشتري</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
 
-            if (username && password) {
-                 alert(`تمت محاولة تسجيل الدخول:\nالمستخدم: ${username}\nكلمة المرور: ${password}\n(يتطلب خادمًا لإتمام العملية)`);
-            } else {
-                alert('الرجاء إدخال بيانات الدخول.');
-            }
-        }
-        
-        function handleSearch(query) {
-            if (query.trim()) {
-                alert(`جارٍ البحث عن: "${query.trim()}"`);
-            }
-        }
+    // ---------- Views switching ----------
+    const views = ['shop','admin','topup','payments','wallets','orders'];
+    function showView(name){
+      views.forEach(v=>{
+        const s = document.getElementById('view'+capitalize(v));
+        if(!s) return;
+        s.style.display = (v===name)? 'block' : 'none';
+      });
+      // nav active
+      qsa('.nav a').forEach(a=>{
+        a.classList.toggle('active', a.dataset.view === name);
+      });
+      el('pageTitle').innerText = (name==='shop')? 'المتجر' : (name==='admin')? 'لوحة الإدارة' : (name==='topup')? 'اضافة رصيد' : (name==='orders')? 'طلباتي' : 'المتجر';
+    }
+    function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            showPage('main-content');
-            document.querySelector('.bottom-nav .nav-item').classList.add('active');
-        });
-    </script>
+    // ---------- Admin / login (very simple demo) ----------
+    function openLogin(){ el('loginModal').style.display='flex'; }
+    function closeLogin(){ el('loginModal').style.display='none'; el('adminPass').value=''; }
+
+    function setAdminLogged(flag){
+      localStorage.setItem('isAdmin', flag ? '1' : '0');
+      el('adminLink').style.display = flag ? 'inline-flex' : 'none';
+      el('btnLogin').innerText = flag? 'خروج المشرف' : 'تسجيل المشرف';
+    }
+
+    function seedDemoData(){
+      // create some demo orders
+      state.orders = [
+        {id: 'o1', user: 'user1', amount: 2.5, status:'Pending'},
+        {id: 'o2', user: 'user2', amount: 0.75, status:'Processing'},
+        {id: 'o3', user: 'user3', amount: 1.0, status:'Accepted'},
+      ];
+      state.usersCount = 12;
+      state.balance = 178.09;
+      localStorage.setItem('demo_orders', JSON.stringify(state.orders));
+      localStorage.setItem('demo_users', state.usersCount);
+      localStorage.setItem('demo_balance', state.balance);
+      renderAdminOverview();
+      alert('تم إنشاء بيانات تجريبية');
+    }
+
+    function clearDemoData(){
+      state.orders = [];
+      state.usersCount = 0;
+      state.balance = 0;
+      localStorage.removeItem('demo_orders');
+      localStorage.removeItem('demo_users');
+      localStorage.removeItem('demo_balance');
+      renderAdminOverview();
+      alert('تم مسح البيانات');
+    }
+
+    function renderAdminOverview(){
+      el('statUsers').innerText = state.usersCount;
+      el('statOrders').innerText = state.orders.length;
+      el('statBalance').innerText = '$' + (state.balance||0).toFixed(3);
+      // table
+      const tbody = el('ordersTable').querySelector('tbody');
+      tbody.innerHTML = '';
+      state.orders.forEach((o, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${idx+1}</td><td>${o.user}</td><td>$${o.amount}</td><td>${o.status}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ---------- Orders (user) ----------
+    function addOrder(product){
+      const ord = { id: 'o'+Date.now(), user: 'you', amount: Number(product.price), status: 'Pending' };
+      state.orders.push(ord);
+      localStorage.setItem('demo_orders', JSON.stringify(state.orders));
+      // increment users example
+      state.usersCount = (Number(localStorage.getItem('demo_users')||0) || 3);
+      state.usersCount += 0; // no change
+      localStorage.setItem('demo_users', state.usersCount);
+      alert('تم إنشاء الطلب (تجريبي)\nالمبلغ: $' + product.price);
+      renderMyOrders();
+      renderAdminOverview();
+    }
+
+    function renderMyOrders(){
+      const list = el('myOrdersList');
+      list.innerHTML = '';
+      const mine = state.orders.filter(o => o.user === 'you' || o.user==='user1' || true).slice(0,6);
+      mine.forEach(o=>{
+        const d = document.createElement('div');
+        d.style.padding='8px'; d.style.marginTop='6px'; d.style.background='rgba(255,255,255,0.02)'; d.style.borderRadius='8px';
+        d.innerHTML = `<div style="display:flex;justify-content:space-between"><div>${o.user}</div><div class="small-muted">$${o.amount}</div></div><div class="small-muted" style="margin-top:6px">${o.status}</div>`;
+        list.appendChild(d);
+      });
+    }
+
+    // ---------- Dark toggle ----------
+    let darkOn = true;
+    function applyDark(){
+      document.body.style.background = darkOn ? 'var(--bg)' : 'var(--light-bg)';
+      // move knob
+      el('toggleKnob').style.left = darkOn ? '24px' : '4px';
+      // change toggle color
+      el('darkToggle').querySelector('.toggle-btn').style.background = darkOn ? 'var(--accent)' : '#2b2b2b';
+      // small cosmetic
+      document.body.style.color = darkOn ? '#e6eef8' : '#0b1220';
+      // panel variables (simple)
+      if(!darkOn){
+        document.documentElement.style.setProperty('--bg', '#f6f7fb');
+        document.documentElement.style.setProperty('--panel', '#fff');
+        document.documentElement.style.setProperty('--muted', '#4b5563');
+        document.documentElement.style.setProperty('--card', '#fff');
+      }else{
+        document.documentElement.style.setProperty('--bg', '#0f1720');
+        document.documentElement.style.setProperty('--panel', '#101217');
+        document.documentElement.style.setProperty('--muted', '#99a0b3');
+        document.documentElement.style.setProperty('--card', '#111318');
+      }
+    }
+
+    // ---------- Events binding ----------
+    document.addEventListener('click', (e)=>{
+      if(e.target.matches('.buy')) {
+        const id = e.target.dataset.id;
+        const p = state.products.find(x=>x.id===id);
+        if(p) addOrder(p);
+      }
+      if(e.target.matches('.nav a')) {
+        e.preventDefault();
+      }
+    });
+
+    // nav links
+    qsa('.nav a').forEach(a=>{
+      a.addEventListener('click', (ev)=>{
+        ev.preventDefault();
+        const v = a.dataset.view;
+        if(v==='admin'){
+          // require admin login
+          const isAdmin = localStorage.getItem('isAdmin') === '1';
+          if(!isAdmin){
+            openLogin(); return;
+          }
+        }
+        showView(v);
+      });
+    });
+
+    // login dialog
+    el('btnLogin').addEventListener('click', ()=>{
+      const isAdmin = localStorage.getItem('isAdmin') === '1';
+      if(isAdmin){
+        // logout
+        setAdminLogged(false);
+        alert('تم تسجيل الخروج كمشرف');
+        return;
+      }
+      openLogin();
+    });
+    el('cancelLogin').addEventListener('click', closeLogin);
+    el('confirmLogin').addEventListener('click', ()=>{
+      const v = el('adminPass').value.trim();
+      // demo password: admin
+      if(v === 'admin'){
+        setAdminLogged(true);
+        closeLogin();
+        alert('تم تسجيل الدخول كمشرف (تجريبي)');
+        showView('admin');
+        renderAdminOverview();
+      } else {
+        alert('كلمة المرور غير صحيحة (تجريبي). استخدم: admin');
+      }
+    });
+
+    // seed / clear
+    el('seedBtn').addEventListener('click', seedDemoData);
+    el('clearBtn').addEventListener('click', clearDemoData);
+
+    // topup
+    el('doTopup').addEventListener('click', ()=>{
+      const v = Number(el('topupAmount').value || 0);
+      if(!v){ alert('ادخل مبلغ صحيح'); return; }
+      state.balance += v;
+      localStorage.setItem('demo_balance', state.balance);
+      renderAdminOverview();
+      alert('تم اضافة الرصيد: $' + v.toFixed(3));
+    });
+
+    // search
+    el('searchInput').addEventListener('input', (e)=> renderProducts(e.target.value));
+
+    // admin link visibility depending on login
+    (function init(){
+      const isAdmin = localStorage.getItem('isAdmin') === '1';
+      setAdminLogged(isAdmin);
+      renderProducts();
+      renderAdminOverview();
+      renderMyOrders();
+      // dark knob position
+      el('toggleKnob').style.left = darkOn ? '24px' : '4px';
+      el('darkToggle').addEventListener('click', ()=>{ darkOn = !darkOn; applyDark(); });
+      // product buy clicks (delegate)
+      document.addEventListener('click', (ev)=>{
+        if(ev.target && ev.target.classList && ev.target.classList.contains('buy')){
+          // handled above
+        }
+      });
+      // mobile: hide sidebar when clicking main area
+      document.querySelector('.main').addEventListener('click', ()=>{
+        if(window.innerWidth <= 780) document.getElementById('sidebar').classList.add('hidden');
+      });
+      // toggle sidebar on small screens via avatar click
+      document.querySelector('.avatar').addEventListener('click', ()=>{
+        if(window.innerWidth <= 780) document.getElementById('sidebar').classList.toggle('hidden');
+      });
+    })();
+
+  </script>
 </body>
 </html>
