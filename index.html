@@ -1,471 +1,224 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>متجر + لوحة إدارة (نسخة HTML)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💎 العبود ستور</title>
   <style>
-    :root{
-      --bg:#0f1720; --panel:#101217; --muted:#99a0b3; --accent:#8b5cf6; --card:#111318;
-      --light-bg:#f6f7fb; --light-panel:#fff; --light-text:#0b1220;
+    body {
+      margin:0;
+      font-family:"Tajawal",sans-serif;
+      background:#0d0d0d;
+      color:#fff;
+      transition: background .3s, color .3s;
     }
-    html,body{height:100%; margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans Arabic',sans-serif;}
-    body{background:var(--bg); color:#e6eef8; display:flex; min-height:100vh;}
-    .container{display:flex; width:100%;}
-    /* Sidebar */
-    .sidebar{width:320px; max-width:38vw; background:linear-gradient(180deg,#0b0d11, #121316); padding:20px; box-sizing:border-box; box-shadow:6px 0 18px rgba(0,0,0,0.6);}
-    .profile{display:flex; gap:12px; align-items:center; margin-bottom:18px}
-    .avatar{width:64px; height:64px; border-radius:50%; background:conic-gradient(from 180deg,#7c3aed,#06b6d4); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:20px;}
-    .user-info{flex:1}
-    .user-name{font-weight:700; font-size:16px}
-    .user-sub{color:var(--muted); font-size:13px; margin-top:6px}
-    /* nav */
-    .nav{margin-top:6px; display:flex; flex-direction:column; gap:8px}
-    .nav a{display:flex; align-items:center; gap:10px; padding:12px; border-radius:8px; text-decoration:none; color:inherit;}
-    .nav a .ico{width:36px; text-align:center}
-    .nav a:hover{background:rgba(255,255,255,0.03)}
-    .nav a.active{background:rgba(255,255,255,0.06)}
-    .divider{height:1px; background:rgba(255,255,255,0.04); margin:12px 0}
-    .dark-toggle{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:14px}
-    .toggle-btn{width:46px; height:26px; background:#2b2b2b; border-radius:20px; position:relative; cursor:pointer}
-    .toggle-knob{width:18px; height:18px; background:#fff; border-radius:50%; position:absolute; top:4px; left:4px; transition:all .18s}
-    /* content */
-    .main{flex:1; padding:20px; box-sizing:border-box; overflow:auto}
-    header.top{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:18px}
-    .search{display:flex; gap:8px; align-items:center}
-    .search input{padding:10px 12px; border-radius:12px; border:0; background:#0b1116; color:inherit}
-    h1{margin:0 0 6px 0}
-    /* Grid */
-    .grid{display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:14px}
-    .card{background:var(--card); padding:12px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.5)}
-    .card .img{height:96px; border-radius:8px; background:linear-gradient(90deg,#0f1720,#101827); margin-bottom:8px}
-    .price{font-weight:700; color:#9ae6b4}
-    .buy{margin-top:8px; width:100%; padding:8px; background:#ef4444; border:0; color:#fff; border-radius:8px; cursor:pointer}
-    /* Admin */
-    .admin-panel{background:linear-gradient(180deg,#071018, #07121a); padding:16px; border-radius:12px}
-    .stats{display:flex; gap:12px; flex-wrap:wrap}
-    .stat{flex:1; min-width:160px; background:#071b2a; padding:12px; border-radius:10px}
-    .stat .label{color:var(--muted); font-size:13px}
-    .stat .val{font-size:20px; font-weight:700}
-    .orders-table{margin-top:12px; overflow:auto}
-    table{width:100%; border-collapse:collapse; font-size:14px}
-    th,td{padding:8px 10px; text-align:right; border-bottom:1px solid rgba(255,255,255,0.03)}
-    /* light mode */
-    .light body-mode{--bg:var(--light-bg); --panel:var(--light-panel); --muted:#4b5563; --card:#fff; color:var(--light-text)}
-    /* small screens */
-    @media (max-width:780px){
-      .sidebar{position:fixed; left:0; top:0; bottom:0; transform:translateX(0); z-index:30; width:78%; max-width:320px; transition:transform .18s}
-      .sidebar.hidden{transform:translateX(-110%)}
-      .main{padding:14px}
+    header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:#101020;
+      padding:10px 15px;
     }
-    /* rtl small polish */
-    .rtl-right{margin-right:8px}
-    /* login modal */
-    .modal{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:60}
-    .modal .box{background:var(--panel); padding:18px; border-radius:10px; width:320px; max-width:92%}
-    .btn{padding:10px 12px; border-radius:8px; border:0; cursor:pointer}
-    .btn-primary{background:var(--accent); color:white}
-    .small-muted{color:var(--muted); font-size:13px}
+    h2 { margin:0; }
+    .menu {
+      position:fixed;
+      top:0; right:-280px;
+      width:260px; height:100vh;
+      background:#151515;
+      padding:15px;
+      box-shadow:-3px 0 6px rgba(0,0,0,0.4);
+      transition:.4s;
+      overflow-y:auto;
+      z-index:999;
+    }
+    .menu.open { right:0; }
+    .user-info {
+      text-align:center;
+      margin-bottom:15px;
+    }
+    .user-info img {
+      width:70px; height:70px; border-radius:50%;
+    }
+    .vip {
+      background:gold;
+      color:#000;
+      font-weight:bold;
+      border-radius:8px;
+      padding:2px 8px;
+      display:inline-block;
+      margin-top:6px;
+    }
+    .balance {
+      margin-top:10px; font-size:16px; color:#0f0;
+    }
+    .menu a {
+      display:block;
+      background:#222; padding:10px; margin:5px 0;
+      border-radius:8px; color:#fff; text-decoration:none;
+      transition:.2s;
+    }
+    .menu a:hover { background:#333; }
+    .dark-toggle {
+      margin-top:15px; text-align:center;
+    }
+    .lang-select {
+      display:flex; justify-content:center; gap:10px; margin-top:10px;
+    }
+    .lang-select button {
+      background:#333; color:#fff; border:none;
+      padding:5px 12px; border-radius:6px; cursor:pointer;
+    }
+    .sections {
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(140px,1fr));
+      gap:15px; padding:15px;
+    }
+    .section-card {
+      background:#222; border-radius:8px;
+      overflow:hidden; text-align:center; color:#fff;
+      cursor:pointer; transition:.3s;
+    }
+    .section-card img {
+      width:100%; height:100px; object-fit:cover;
+    }
+    .section-card p {
+      margin:10px;
+      font-size:14px;
+    }
   </style>
 </head>
 <body>
-  <div class="container" id="app">
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-      <div class="profile">
-        <div class="avatar" id="avatar">عب</div>
-        <div class="user-info">
-          <div class="user-name" id="userName">عبدالباسط العبود</div>
-          <div class="user-sub" id="userSub">VIP 10 • $1.197</div>
-        </div>
-      </div>
 
-      <nav class="nav">
-        <a href="#" data-view="shop" class="active"><span class="ico">🏠</span><span>الرئيسية</span></a>
-        <a href="#" data-view="topup"><span class="ico">💳</span><span>اضافة رصيد</span></a>
-        <a href="#" data-view="payments"><span class="ico">💸</span><span>دفعاتي</span></a>
-        <a href="#" data-view="wallets"><span class="ico">💼</span><span>محفظتي</span></a>
-        <a href="#" data-view="orders"><span class="ico">🛒</span><span>طلباتي</span></a>
-        <a href="#" data-view="admin" id="adminLink"><span class="ico">🧾</span><span>لوحة الإدارة</span></a>
-      </nav>
+<header>
+  <h2 id="title">💎 العبود ستور</h2>
+  <button id="menuBtn">☰</button>
+</header>
 
-      <div class="divider"></div>
-
-      <div class="dark-toggle">
-        <div>الوضع الداكن</div>
-        <div class="toggle-btn" id="darkToggle"><div class="toggle-knob" id="toggleKnob"></div></div>
-      </div>
-
-      <div style="height:12px"></div>
-      <div class="small-muted">أدوات سريعة</div>
-      <div style="margin-top:8px; display:flex; gap:8px">
-        <button class="btn" id="openSearch">🔎</button>
-        <button class="btn" id="openWhats">💬</button>
-        <button class="btn" id="openShare">↗️</button>
-      </div>
-    </aside>
-
-    <!-- Main content -->
-    <main class="main">
-      <header class="top">
-        <div>
-          <h1 id="pageTitle">المتجر</h1>
-          <div class="small-muted" id="pageSub">تسوق خدمات إلكترونية سريعة</div>
-        </div>
-        <div class="search">
-          <input placeholder="ابحث عن خدمة..." id="searchInput" />
-          <button class="btn btn-primary" id="btnLogin">تسجيل المشرف</button>
-        </div>
-      </header>
-
-      <!-- Views -->
-      <section id="viewShop">
-        <div class="grid" id="productsGrid"></div>
-      </section>
-
-      <section id="viewAdmin" style="display:none">
-        <div class="admin-panel">
-          <h2>لوحة الإدارة</h2>
-          <p class="small-muted">نظرة عامة سريعة على المستخدمين والطلبات والرصيد</p>
-          <div class="stats" style="margin-top:12px">
-            <div class="stat">
-              <div class="label">المستخدمون</div>
-              <div class="val" id="statUsers">0</div>
-            </div>
-            <div class="stat">
-              <div class="label">الطلبات</div>
-              <div class="val" id="statOrders">0</div>
-            </div>
-            <div class="stat">
-              <div class="label">الرصيد الكلي</div>
-              <div class="val" id="statBalance">$0.000</div>
-            </div>
-          </div>
-
-          <div style="margin-top:14px">
-            <h3>طلبات API (لمحة سريعة)</h3>
-            <div class="orders-table">
-              <table id="ordersTable">
-                <thead><tr><th>الرقم</th><th>المستخدم</th><th>المبلغ</th><th>الحالة</th></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap">
-            <button class="btn btn-primary" id="seedBtn">إنشاء بيانات تجريبية</button>
-            <button class="btn" id="clearBtn">مسح البيانات</button>
-          </div>
-        </div>
-      </section>
-
-      <section id="viewTopup" style="display:none">
-        <div class="card">
-          <h3>اضافة رصيد تجريبي</h3>
-          <div style="margin-top:8px">
-            <label>المبلغ (USD)</label>
-            <input id="topupAmount" style="width:120px;padding:8px;border-radius:8px;border:0;background:#0b1116;color:inherit;margin-right:8px" />
-            <button class="btn btn-primary" id="doTopup">اضافة</button>
-          </div>
-        </div>
-      </section>
-
-      <section id="viewPayments" style="display:none">
-        <div class="card">
-          <h3>دفعاتي</h3>
-          <p class="small-muted">قائمة الدفعات (تجريبية)</p>
-        </div>
-      </section>
-
-      <section id="viewWallets" style="display:none">
-        <div class="card">
-          <h3>محفظتي</h3>
-          <p class="small-muted">تفاصيل المحفظة (تجريبية)</p>
-        </div>
-      </section>
-
-      <section id="viewOrders" style="display:none">
-        <div class="card">
-          <h3>طلباتي</h3>
-          <div style="margin-top:8px" id="myOrdersList"></div>
-        </div>
-      </section>
-
-    </main>
-  </div>
-
-  <!-- Login Modal -->
-  <div id="loginModal" class="modal" style="display:none">
-    <div class="box">
-      <h3>تسجيل دخول المشرف</h3>
-      <p class="small-muted">ادخل كلمة المرور الخاصة بالمشرف (تجريبي)</p>
-      <div style="margin-top:12px">
-        <input id="adminPass" placeholder="كلمة المرور" style="width:100%;padding:10px;border-radius:8px;border:0;background:#0b1116;color:inherit" />
-      </div>
-      <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end">
-        <button class="btn" id="cancelLogin">إلغاء</button>
-        <button class="btn btn-primary" id="confirmLogin">دخول</button>
-      </div>
+<div id="menu" class="menu">
+  <div class="user-info" id="userSection">
+    <!-- يظهر قبل تسجيل الدخول -->
+    <a href="#" data-key="home">🏠 الصفحة الرئيسية</a>
+    <a href="#" data-key="about">ℹ️ من نحن</a>
+    <hr>
+    <div class="lang-select">
+      <button onclick="setLanguage('ar')">العربية</button>
+      <button onclick="setLanguage('tr')">Türkçe</button>
+      <button onclick="setLanguage('en')">English</button>
     </div>
+    <hr>
+    <div class="dark-toggle">
+      <label data-key="dark">الوضع الداكن</label>
+      <input type="checkbox" id="darkModeToggle">
+    </div>
+    <a href="https://wa.me/963984155685" target="_blank" class="whatsapp" data-key="whatsapp">💬 واتساب الدعم</a>
   </div>
+</div>
 
-  <script>
-    // ---------- Demo data & helpers ----------
-    const demoProducts = Array.from({length:9}).map((_,i)=>({
-      id: 'p'+(i+1),
-      title: 'خدمة رقم ' + (i+1),
-      price: ((i+1)*0.25).toFixed(3)
-    }));
-    let state = {
-      products: demoProducts,
-      orders: JSON.parse(localStorage.getItem('demo_orders')||'[]'),
-      usersCount: Number(localStorage.getItem('demo_users')||3),
-      balance: Number(localStorage.getItem('demo_balance')||1.197)
+<div class="login-box" id="loginBox">
+  <h2 data-key="loginTitle">تسجيل الدخول</h2>
+  <p data-key="loginDesc">قم بتسجيل الدخول وتمتع بتجربة سهلة</p>
+  <button id="googleLogin" class="google">تسجيل بواسطة Google</button>
+</div>
+
+<main id="mainContent" style="display:none;">
+  <div class="sections" id="sectionsContainer">
+    <!-- الأقسام تُعرض هنا بعد تسجيل الدخول -->
+  </div>
+</main>
+
+<script>
+  const menu = document.getElementById('menu');
+  document.getElementById('menuBtn').onclick = () => menu.classList.toggle('open');
+
+  const darkToggle = document.getElementById('darkModeToggle');
+  darkToggle.addEventListener('change', () => {
+    document.body.classList.toggle('dark', darkToggle.checked);
+  });
+
+  document.getElementById('googleLogin').onclick = () => {
+    const user = {
+      name:"المستخدم عبود",
+      balance:56000,
+      vip:true,
+      img:"https://i.ibb.co/3kTtjD3/user.png"
     };
+    loginUser(user);
+    loadSections();
+  };
 
-    const el = id => document.getElementById(id);
-    const qs = s => document.querySelector(s);
-    const qsa = s => document.querySelectorAll(s);
+  function loginUser(user){
+    const userSection = document.getElementById('userSection');
+    userSection.innerHTML = `
+      <img src="${user.img}">
+      <h4>${user.name}</h4>
+      ${user.vip?'<span class="vip">VIP</span>':''}
+      <div class="balance" id="balanceText">الرصيد: ${user.balance} ل.س</div>
+      <a href="#" data-key="home">🏠 الصفحة الرئيسية</a>
+      <a href="#" data-key="addBalance">➕ إضافة رصيد</a>
+      <a href="#" data-key="wallet">💼 محفظتي</a>
+      <a href="#" data-key="payments">💳 دفعاتي</a>
+      <a href="#" data-key="orders">📦 طلباتي</a>
+      <a href="#" data-key="agents">🤝 وكلاؤنا</a>
+      <a href="#" data-key="security">🛡️ الحماية</a>
+      <a href="#" data-key="about">ℹ️ من نحن</a>
+      <hr>
+      <div class="lang-select">
+        <button onclick="setLanguage('ar')">العربية</button>
+        <button onclick="setLanguage('tr')">Türkçe</button>
+        <button onclick="setLanguage('en')">English</button>
+      </div>
+      <hr>
+      <div class="dark-toggle">
+        <label data-key="dark">الوضع الداكن</label>
+        <input type="checkbox" id="darkModeToggle2">
+      </div>
+      <a href="https://wa.me/963984155685" target="_blank" class="whatsapp" data-key="whatsapp">💬 واتساب الدعم</a>
+    `;
+    document.getElementById('loginBox').style.display="none";
+    document.getElementById('mainContent').style.display="block";
+    menu.classList.add("open");
+    applyTranslations();
+  }
 
-    // ---------- Render products ----------
-    function renderProducts(filter=''){
-      const grid = el('productsGrid');
-      grid.innerHTML = '';
-      const items = state.products.filter(p => p.title.includes(filter) || p.price.includes(filter));
-      items.forEach(p=>{
-        const card = document.createElement('article');
-        card.className = 'card';
-        card.innerHTML = `
-          <div class="img"></div>
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px">
-            <div style="text-align:right">
-              <div style="font-weight:700">${p.title}</div>
-              <div class="small-muted" style="margin-top:6px">وصف قصير للخدمة</div>
-            </div>
-            <div style="text-align:left">
-              <div class="price">$${p.price}</div>
-              <button class="buy" data-id="${p.id}">اشتري</button>
-            </div>
-          </div>
-        `;
-        grid.appendChild(card);
+  async function loadSections(){
+    const token = '654a9f6d8bdecf14dbeb38ec114e23172b209d91469da936'; // ضع التوكن هنا
+    try {
+      const resp = await fetch(`https://api.alasdika-store.com/api/v2/categories?api_token=${token}`);
+      const json = await resp.json();
+      const list = json.data || [];
+      const container = document.getElementById('sectionsContainer');
+      container.innerHTML = '';
+      list.forEach(cat=>{
+        const card = document.createElement('div');
+        card.className = 'section-card';
+        card.innerHTML = `<img src="${cat.image}" alt="${cat.name}"><p>${cat.name}</p>`;
+        card.onclick = ()=> window.location.href = `category.html?id=${cat.id}`; 
+        container.appendChild(card);
       });
+    } catch(err){
+      console.error('خطأ عند جلب الأقسام:', err);
     }
+  }
 
-    // ---------- Views switching ----------
-    const views = ['shop','admin','topup','payments','wallets','orders'];
-    function showView(name){
-      views.forEach(v=>{
-        const s = document.getElementById('view'+capitalize(v));
-        if(!s) return;
-        s.style.display = (v===name)? 'block' : 'none';
-      });
-      // nav active
-      qsa('.nav a').forEach(a=>{
-        a.classList.toggle('active', a.dataset.view === name);
-      });
-      el('pageTitle').innerText = (name==='shop')? 'المتجر' : (name==='admin')? 'لوحة الإدارة' : (name==='topup')? 'اضافة رصيد' : (name==='orders')? 'طلباتي' : 'المتجر';
-    }
-    function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
-
-    // ---------- Admin / login (very simple demo) ----------
-    function openLogin(){ el('loginModal').style.display='flex'; }
-    function closeLogin(){ el('loginModal').style.display='none'; el('adminPass').value=''; }
-
-    function setAdminLogged(flag){
-      localStorage.setItem('isAdmin', flag ? '1' : '0');
-      el('adminLink').style.display = flag ? 'inline-flex' : 'none';
-      el('btnLogin').innerText = flag? 'خروج المشرف' : 'تسجيل المشرف';
-    }
-
-    function seedDemoData(){
-      // create some demo orders
-      state.orders = [
-        {id: 'o1', user: 'user1', amount: 2.5, status:'Pending'},
-        {id: 'o2', user: 'user2', amount: 0.75, status:'Processing'},
-        {id: 'o3', user: 'user3', amount: 1.0, status:'Accepted'},
-      ];
-      state.usersCount = 12;
-      state.balance = 178.09;
-      localStorage.setItem('demo_orders', JSON.stringify(state.orders));
-      localStorage.setItem('demo_users', state.usersCount);
-      localStorage.setItem('demo_balance', state.balance);
-      renderAdminOverview();
-      alert('تم إنشاء بيانات تجريبية');
-    }
-
-    function clearDemoData(){
-      state.orders = [];
-      state.usersCount = 0;
-      state.balance = 0;
-      localStorage.removeItem('demo_orders');
-      localStorage.removeItem('demo_users');
-      localStorage.removeItem('demo_balance');
-      renderAdminOverview();
-      alert('تم مسح البيانات');
-    }
-
-    function renderAdminOverview(){
-      el('statUsers').innerText = state.usersCount;
-      el('statOrders').innerText = state.orders.length;
-      el('statBalance').innerText = '$' + (state.balance||0).toFixed(3);
-      // table
-      const tbody = el('ordersTable').querySelector('tbody');
-      tbody.innerHTML = '';
-      state.orders.forEach((o, idx) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${idx+1}</td><td>${o.user}</td><td>$${o.amount}</td><td>${o.status}</td>`;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // ---------- Orders (user) ----------
-    function addOrder(product){
-      const ord = { id: 'o'+Date.now(), user: 'you', amount: Number(product.price), status: 'Pending' };
-      state.orders.push(ord);
-      localStorage.setItem('demo_orders', JSON.stringify(state.orders));
-      // increment users example
-      state.usersCount = (Number(localStorage.getItem('demo_users')||0) || 3);
-      state.usersCount += 0; // no change
-      localStorage.setItem('demo_users', state.usersCount);
-      alert('تم إنشاء الطلب (تجريبي)\nالمبلغ: $' + product.price);
-      renderMyOrders();
-      renderAdminOverview();
-    }
-
-    function renderMyOrders(){
-      const list = el('myOrdersList');
-      list.innerHTML = '';
-      const mine = state.orders.filter(o => o.user === 'you' || o.user==='user1' || true).slice(0,6);
-      mine.forEach(o=>{
-        const d = document.createElement('div');
-        d.style.padding='8px'; d.style.marginTop='6px'; d.style.background='rgba(255,255,255,0.02)'; d.style.borderRadius='8px';
-        d.innerHTML = `<div style="display:flex;justify-content:space-between"><div>${o.user}</div><div class="small-muted">$${o.amount}</div></div><div class="small-muted" style="margin-top:6px">${o.status}</div>`;
-        list.appendChild(d);
-      });
-    }
-
-    // ---------- Dark toggle ----------
-    let darkOn = true;
-    function applyDark(){
-      document.body.style.background = darkOn ? 'var(--bg)' : 'var(--light-bg)';
-      // move knob
-      el('toggleKnob').style.left = darkOn ? '24px' : '4px';
-      // change toggle color
-      el('darkToggle').querySelector('.toggle-btn').style.background = darkOn ? 'var(--accent)' : '#2b2b2b';
-      // small cosmetic
-      document.body.style.color = darkOn ? '#e6eef8' : '#0b1220';
-      // panel variables (simple)
-      if(!darkOn){
-        document.documentElement.style.setProperty('--bg', '#f6f7fb');
-        document.documentElement.style.setProperty('--panel', '#fff');
-        document.documentElement.style.setProperty('--muted', '#4b5563');
-        document.documentElement.style.setProperty('--card', '#fff');
-      }else{
-        document.documentElement.style.setProperty('--bg', '#0f1720');
-        document.documentElement.style.setProperty('--panel', '#101217');
-        document.documentElement.style.setProperty('--muted', '#99a0b3');
-        document.documentElement.style.setProperty('--card', '#111318');
-      }
-    }
-
-    // ---------- Events binding ----------
-    document.addEventListener('click', (e)=>{
-      if(e.target.matches('.buy')) {
-        const id = e.target.dataset.id;
-        const p = state.products.find(x=>x.id===id);
-        if(p) addOrder(p);
-      }
-      if(e.target.matches('.nav a')) {
-        e.preventDefault();
-      }
+  const translations = {
+    ar: { title:"💎 العبود ستور", loginTitle:"تسجيل الدخول", loginDesc:"قم بتسجيل الدخول وتمتع بتجربة سهلة", home:"الصفحة الرئيسية", addBalance:"إضافة رصيد", wallet:"محفظتي", payments:"دفعاتي", orders:"طلباتي", agents:"وكلاؤنا", security:"الحماية", about:"من نحن", dark:"الوضع الداكن", whatsapp:"واتساب الدعم" },
+    tr: { title:"💎 Al-Aboud Mağazası", loginTitle:"Giriş Yap", loginDesc:"Kolay alışveriş için giriş yapın", home:"Ana Sayfa", addBalance:"Bakiye Ekle", wallet:"Cüzdanım", payments:"Ödemelerim", orders:"Siparişlerim", agents:"Bayilerimiz", security:"Güvenlik", about:"Hakkımızda", dark:"Karanlık Mod", whatsapp:"WhatsApp Destek" },
+    en: { title:"💎 Al-Aboud Store", loginTitle:"Login", loginDesc:"Sign in and enjoy easy shopping", home:"Home", addBalance:"Add Balance", wallet:"My Wallet", payments:"My Payments", orders:"My Orders", agents:"Our Agents", security:"Security", about:"About Us", dark:"Dark Mode", whatsapp:"WhatsApp Support" }
+  };
+  let currentLang = 'ar';
+  function applyTranslations(){
+    document.getElementById('title').textContent = translations[currentLang].title;
+    document.querySelectorAll('[data-key]').forEach(el=> {
+      const key = el.getAttribute('data-key');
+      if(translations[currentLang][key]) el.textContent = translations[currentLang][key];
     });
+    document.documentElement.dir = (currentLang==='ar')?'rtl':'ltr';
+  }
+  function setLanguage(lang){
+    currentLang = lang;
+    applyTranslations();
+  }
+</script>
 
-    // nav links
-    qsa('.nav a').forEach(a=>{
-      a.addEventListener('click', (ev)=>{
-        ev.preventDefault();
-        const v = a.dataset.view;
-        if(v==='admin'){
-          // require admin login
-          const isAdmin = localStorage.getItem('isAdmin') === '1';
-          if(!isAdmin){
-            openLogin(); return;
-          }
-        }
-        showView(v);
-      });
-    });
-
-    // login dialog
-    el('btnLogin').addEventListener('click', ()=>{
-      const isAdmin = localStorage.getItem('isAdmin') === '1';
-      if(isAdmin){
-        // logout
-        setAdminLogged(false);
-        alert('تم تسجيل الخروج كمشرف');
-        return;
-      }
-      openLogin();
-    });
-    el('cancelLogin').addEventListener('click', closeLogin);
-    el('confirmLogin').addEventListener('click', ()=>{
-      const v = el('adminPass').value.trim();
-      // demo password: admin
-      if(v === 'admin'){
-        setAdminLogged(true);
-        closeLogin();
-        alert('تم تسجيل الدخول كمشرف (تجريبي)');
-        showView('admin');
-        renderAdminOverview();
-      } else {
-        alert('كلمة المرور غير صحيحة (تجريبي). استخدم: admin');
-      }
-    });
-
-    // seed / clear
-    el('seedBtn').addEventListener('click', seedDemoData);
-    el('clearBtn').addEventListener('click', clearDemoData);
-
-    // topup
-    el('doTopup').addEventListener('click', ()=>{
-      const v = Number(el('topupAmount').value || 0);
-      if(!v){ alert('ادخل مبلغ صحيح'); return; }
-      state.balance += v;
-      localStorage.setItem('demo_balance', state.balance);
-      renderAdminOverview();
-      alert('تم اضافة الرصيد: $' + v.toFixed(3));
-    });
-
-    // search
-    el('searchInput').addEventListener('input', (e)=> renderProducts(e.target.value));
-
-    // admin link visibility depending on login
-    (function init(){
-      const isAdmin = localStorage.getItem('isAdmin') === '1';
-      setAdminLogged(isAdmin);
-      renderProducts();
-      renderAdminOverview();
-      renderMyOrders();
-      // dark knob position
-      el('toggleKnob').style.left = darkOn ? '24px' : '4px';
-      el('darkToggle').addEventListener('click', ()=>{ darkOn = !darkOn; applyDark(); });
-      // product buy clicks (delegate)
-      document.addEventListener('click', (ev)=>{
-        if(ev.target && ev.target.classList && ev.target.classList.contains('buy')){
-          // handled above
-        }
-      });
-      // mobile: hide sidebar when clicking main area
-      document.querySelector('.main').addEventListener('click', ()=>{
-        if(window.innerWidth <= 780) document.getElementById('sidebar').classList.add('hidden');
-      });
-      // toggle sidebar on small screens via avatar click
-      document.querySelector('.avatar').addEventListener('click', ()=>{
-        if(window.innerWidth <= 780) document.getElementById('sidebar').classList.toggle('hidden');
-      });
-    })();
-
-  </script>
 </body>
 </html>
